@@ -185,38 +185,40 @@ class GameEngine:
         self.ball['vx'] *= self.BALL_FRICTION
         self.ball['vy'] *= self.BALL_FRICTION
         
-        # Ball collision with walls (left and right)
-        if self.ball['x'] - self.BALL_RADIUS < 0:
-            self.ball['vx'] *= -0.8
-            self.ball['x'] = self.BALL_RADIUS
-        elif self.ball['x'] + self.BALL_RADIUS > self.CANVAS_WIDTH:
-            self.ball['vx'] *= -0.8
-            self.ball['x'] = self.CANVAS_WIDTH - self.BALL_RADIUS
+        # Ball collision with top and bottom walls
+        if self.ball['y'] - self.BALL_RADIUS < 0:
+            self.ball['vy'] *= -0.8
+            self.ball['y'] = self.BALL_RADIUS
+        elif self.ball['y'] + self.BALL_RADIUS > self.CANVAS_HEIGHT:
+            self.ball['vy'] *= -0.8
+            self.ball['y'] = self.CANVAS_HEIGHT - self.BALL_RADIUS
             
-        # Check goals (top and bottom)
-        goal_left = (self.CANVAS_WIDTH - self.GOAL_WIDTH) / 2
-        goal_right = goal_left + self.GOAL_WIDTH
+        # Check goals (left and right side for horizontal field)
+        goal_top = (self.CANVAS_HEIGHT - self.GOAL_HEIGHT) / 2
+        goal_bottom = goal_top + self.GOAL_HEIGHT
         goal_scored = None
         
-        # Top goal (scores for RED team - blue defends)
-        if self.ball['y'] - self.BALL_RADIUS < 0:
-            if self.ball['x'] > goal_left and self.ball['x'] < goal_right:
-                self.score['red'] += 1
-                goal_scored = 'red'
-                self.reset_positions_for_kickoff('red')
-            else:
-                self.ball['vy'] *= -0.8
-                self.ball['y'] = self.BALL_RADIUS
-                
-        # Bottom goal (scores for BLUE team - red defends)
-        if self.ball['y'] + self.BALL_RADIUS > self.CANVAS_HEIGHT:
-            if self.ball['x'] > goal_left and self.ball['x'] < goal_right:
+        # LEFT goal (RED defends this side - BLUE scores here)
+        if self.ball['x'] - self.BALL_RADIUS < 0:
+            if self.ball['y'] > goal_top and self.ball['y'] < goal_bottom:
                 self.score['blue'] += 1
                 goal_scored = 'blue'
+                # Blue scored, so RED gets kickoff
                 self.reset_positions_for_kickoff('blue')
             else:
-                self.ball['vy'] *= -0.8
-                self.ball['y'] = self.CANVAS_HEIGHT - self.BALL_RADIUS
+                self.ball['vx'] *= -0.8
+                self.ball['x'] = self.BALL_RADIUS
+                
+        # RIGHT goal (BLUE defends this side - RED scores here)
+        if self.ball['x'] + self.BALL_RADIUS > self.CANVAS_WIDTH:
+            if self.ball['y'] > goal_top and self.ball['y'] < goal_bottom:
+                self.score['red'] += 1
+                goal_scored = 'red'
+                # Red scored, so BLUE gets kickoff
+                self.reset_positions_for_kickoff('red')
+            else:
+                self.ball['vx'] *= -0.8
+                self.ball['x'] = self.CANVAS_WIDTH - self.BALL_RADIUS
                 
         # Ball collision with players - improved physics
         for player in self.players.values():
