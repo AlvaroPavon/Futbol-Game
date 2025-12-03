@@ -53,33 +53,79 @@ const Game = () => {
     
     // Keyboard controls
     const handleKeyDown = (e) => {
-      keysPressed.current[e.key.toLowerCase()] = true;
+      const key = e.key.toLowerCase();
+      keysPressed.current[key] = true;
+      
+      // Send input to server
+      if (socket && connected) {
+        socket.emit('player_input', { 
+          keys: keysPressed.current,
+          kick: key === ' ' || key === 'x'
+        });
+      }
       
       // Kick with space or x
-      if (e.key === ' ' || e.key.toLowerCase() === 'x') {
+      if (key === ' ' || key === 'x') {
         e.preventDefault();
-        kickBall();
       }
     };
 
     const handleKeyUp = (e) => {
       keysPressed.current[e.key.toLowerCase()] = false;
+      
+      // Send input to server
+      if (socket && connected) {
+        socket.emit('player_input', { 
+          keys: keysPressed.current
+        });
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    // Start game loop
-    startGameLoop(ctx);
+    // Listen for game state updates from server
+    if (socket && connected) {
+      socket.on('game_state', (gameState) => {
+        renderGame(ctx, gameState);
+        setGameState(prev => ({
+          ...prev,
+          score: gameState.score,
+          time: Math.floor(gameState.time)
+        }));
+      });
+
+      socket.on('goal_scored', (data) => {
+        toast({
+          title: `¡GOL para ${data.team === 'red' ? 'Rojo' : 'Azul'}!`,
+          description: `Marcador: ${data.score.red} - ${data.score.blue}`
+        });
+      });
+
+      socket.on('game_over', (data) => {
+        setGameState(prev => ({ ...prev, gameOver: true }));
+        const winnerText = data.winner === 'draw' ? 'Empate' : 
+                          `Ganó el equipo ${data.winner === 'red' ? 'Rojo' : 'Azul'}`;
+        toast({
+          title: "¡Juego Terminado!",
+          description: `${winnerText} - ${data.finalScore.red}:${data.finalScore.blue}`
+        });
+        setTimeout(() => {
+          navigate(`/room/${roomId}`);
+        }, 5000);
+      });
+    }
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
-      if (gameLoopRef.current) {
-        cancelAnimationFrame(gameLoopRef.current);
+      if (socket) {
+        socket.off('game_state');
+        socket.off('goal_scored');
+        socket.off('game_over');
       }
     };
-  }, []);
+  }, [socket, connected, navigate, roomId]);
 
   const startGameLoop = (ctx) => {
     const loop = () => {
