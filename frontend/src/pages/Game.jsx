@@ -24,6 +24,8 @@ const Game = () => {
   // Game constants - horizontal field
   const CANVAS_WIDTH = 1400;
   const CANVAS_HEIGHT = 600;
+  const PLAYER_RADIUS = 20;
+  const BALL_RADIUS = 12;
 
   useEffect(() => {
     const canvas = canvasRef.current;
