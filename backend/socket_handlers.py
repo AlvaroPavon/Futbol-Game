@@ -269,9 +269,9 @@ class SocketManager:
                 logger.error(f'Error sending chat message: {e}')
                 
     async def game_loop(self, room_id: str):
-        """Main game loop - runs at 60 FPS"""
+        """Main game loop - runs at 120 FPS for smoother gameplay"""
         engine = self.game_engines[room_id]
-        fps = 60
+        fps = 120
         frame_time = 1 / fps
         
         try:
