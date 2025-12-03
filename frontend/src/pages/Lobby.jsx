@@ -79,15 +79,6 @@ const Lobby = () => {
   };
 
   const handleJoinRoom = (room) => {
-    if (room.status === 'playing') {
-      toast({
-        title: "Sala en juego",
-        description: "Esta sala ya está jugando",
-        variant: "destructive"
-      });
-      return;
-    }
-
     const currentPlayers = room.current_players || room.players || 0;
     if (currentPlayers >= room.maxPlayers) {
       toast({
@@ -104,6 +95,13 @@ const Lobby = () => {
         username: user.username
       });
       navigate(`/room/${room.id}`);
+      
+      if (room.status === 'playing') {
+        toast({
+          title: "Uniendo a partida en curso",
+          description: "Te unirás como espectador hasta el próximo partido"
+        });
+      }
     } else {
       toast({
         title: "Error de conexión",
