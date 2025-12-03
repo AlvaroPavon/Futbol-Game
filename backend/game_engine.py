@@ -119,6 +119,23 @@ class GameEngine:
             new_x = player['x'] + player['vx']
             new_y = player['y'] + player['vy']
             
+            # Check kickoff restrictions - opposing team cannot enter center circle
+            if self.kickoff_team and not self.ball_touched:
+                if player['team'] != self.kickoff_team:
+                    # Calculate distance from center
+                    center_x = self.CANVAS_WIDTH / 2
+                    center_y = self.CANVAS_HEIGHT / 2
+                    dist_to_center = math.sqrt((new_x - center_x)**2 + (new_y - center_y)**2)
+                    
+                    # Don't allow entry into kickoff circle
+                    if dist_to_center < self.KICKOFF_RADIUS + self.PLAYER_RADIUS:
+                        # Push player back outside the circle
+                        angle = math.atan2(new_y - center_y, new_x - center_x)
+                        new_x = center_x + math.cos(angle) * (self.KICKOFF_RADIUS + self.PLAYER_RADIUS)
+                        new_y = center_y + math.sin(angle) * (self.KICKOFF_RADIUS + self.PLAYER_RADIUS)
+                        player['vx'] = 0
+                        player['vy'] = 0
+            
             # Check collision with other players
             can_move = True
             for other_id, other in self.players.items():
