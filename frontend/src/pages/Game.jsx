@@ -264,6 +264,32 @@ const Game = () => {
 
     const ctx = canvas.getContext('2d');
     
+    // High FPS rendering loop using requestAnimationFrame
+    const renderLoop = () => {
+      if (lastGameStateRef.current) {
+        const now = Date.now();
+        const timeSinceUpdate = now - lastUpdateTimeRef.current;
+        const updateInterval = 1000 / 120; // Expecting 120 FPS from server
+        const alpha = Math.min(timeSinceUpdate / updateInterval, 1);
+        
+        // Interpolate between previous and current state for smooth rendering
+        const interpolatedState = interpolateGameState(
+          previousGameStateRef.current,
+          lastGameStateRef.current,
+          alpha
+        );
+        
+        if (interpolatedState) {
+          renderGame(ctx, interpolatedState);
+        }
+      }
+      
+      animationFrameRef.current = requestAnimationFrame(renderLoop);
+    };
+    
+    // Start the render loop
+    animationFrameRef.current = requestAnimationFrame(renderLoop);
+    
     // Keyboard controls
     const handleKeyDown = (e) => {
       const key = e.key.toLowerCase();
