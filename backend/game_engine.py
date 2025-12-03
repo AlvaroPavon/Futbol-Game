@@ -7,16 +7,17 @@ class GameEngine:
         self.room_id = room_id
         self.running = False
         
-        # Game constants
-        self.CANVAS_WIDTH = 1200
-        self.CANVAS_HEIGHT = 600
+        # Game constants - horizontal field
+        self.CANVAS_WIDTH = 1400  # Wider field
+        self.CANVAS_HEIGHT = 600  # Height
         self.PLAYER_RADIUS = 20
         self.BALL_RADIUS = 12
         self.PLAYER_SPEED = 4
         self.BALL_FRICTION = 0.98
         self.KICK_POWER = 15
+        self.PUSH_POWER = 8  # Power for pushing other players
         self.KICK_DISTANCE = self.PLAYER_RADIUS + self.BALL_RADIUS + 5
-        self.GOAL_WIDTH = 200
+        self.GOAL_HEIGHT = 150  # Goal height (vertical)
         self.KICKOFF_RADIUS = 80  # Radius of center circle
         
         # Game state
