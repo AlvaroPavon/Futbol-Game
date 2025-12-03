@@ -168,7 +168,7 @@ class GameEngine:
             if self.ball['x'] > goal_left and self.ball['x'] < goal_right:
                 self.score['red'] += 1
                 goal_scored = 'red'
-                self.reset_ball()
+                self.reset_positions_for_kickoff('red')
             else:
                 self.ball['vy'] *= -0.8
                 self.ball['y'] = self.BALL_RADIUS
@@ -178,7 +178,7 @@ class GameEngine:
             if self.ball['x'] > goal_left and self.ball['x'] < goal_right:
                 self.score['blue'] += 1
                 goal_scored = 'blue'
-                self.reset_ball()
+                self.reset_positions_for_kickoff('blue')
             else:
                 self.ball['vy'] *= -0.8
                 self.ball['y'] = self.CANVAS_HEIGHT - self.BALL_RADIUS
