@@ -12,10 +12,10 @@ class GameEngine:
         self.CANVAS_HEIGHT = 600  # Height
         self.PLAYER_RADIUS = 20
         self.BALL_RADIUS = 12
-        self.PLAYER_SPEED = 4
+        self.PLAYER_SPEED = 2.5  # Reducido de 4 a 2.5 para mejor control
         self.BALL_FRICTION = 0.98
         self.KICK_POWER = 15
-        self.PUSH_POWER = 8  # Power for pushing other players
+        self.PUSH_POWER = 15  # Aumentado de 8 a 15 para empujar más fuerte
         self.KICK_DISTANCE = self.PLAYER_RADIUS + self.BALL_RADIUS + 5
         self.GOAL_HEIGHT = 150  # Goal height (vertical)
         self.KICKOFF_RADIUS = 80  # Radius of center circle
