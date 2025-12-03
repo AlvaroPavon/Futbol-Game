@@ -86,19 +86,25 @@ const Game = () => {
 
     // Listen for game state updates from server
     if (socket && connected) {
-      socket.on('game_state', (gameState) => {
-        renderGame(ctx, gameState);
+      socket.on('game_state', (gameStateFromServer) => {
+        renderGame(ctx, gameStateFromServer);
         setGameState(prev => ({
           ...prev,
-          score: gameState.score,
-          time: Math.floor(gameState.time)
+          score: gameStateFromServer.score || prev.score,
+          time: Math.floor(gameStateFromServer.time || prev.time)
         }));
       });
 
       socket.on('goal_scored', (data) => {
+        console.log('Goal scored:', data);
+        setGameState(prev => ({
+          ...prev,
+          score: data.score
+        }));
         toast({
-          title: `¡GOL para ${data.team === 'red' ? 'Rojo' : 'Azul'}!`,
-          description: `Marcador: ${data.score.red} - ${data.score.blue}`
+          title: `¡GOL para equipo ${data.team === 'red' ? 'ROJO' : 'AZUL'}!`,
+          description: `Marcador: ${data.score.red} - ${data.score.blue}`,
+          duration: 3000
         });
       });
 
