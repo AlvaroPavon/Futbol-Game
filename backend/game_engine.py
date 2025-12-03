@@ -102,6 +102,11 @@ class GameEngine:
                 player['vx'] = dx * self.PLAYER_SPEED
                 player['vy'] = dy * self.PLAYER_SPEED
                 
+                # Handle push
+                if self.player_inputs[player_id]['push']:
+                    self.push_players(player_id, player)
+                    self.player_inputs[player_id]['push'] = False
+                
                 # Handle kick (with kickoff restrictions)
                 if self.player_inputs[player_id]['kick']:
                     # Check kickoff restrictions
