@@ -226,11 +226,28 @@ const Game = () => {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Draw score
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 36px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${gameState.score.red} - ${gameState.score.blue}`, CANVAS_WIDTH / 2, 50);
+    // Draw score at the top center
+    if (score) {
+      // Score background
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fillRect(CANVAS_WIDTH / 2 - 80, 10, 160, 50);
+      
+      // Red team score
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 32px Arial';
+      ctx.textAlign = 'right';
+      ctx.fillText(score.red || 0, CANVAS_WIDTH / 2 - 15, 45);
+      
+      // Separator
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.fillText('-', CANVAS_WIDTH / 2, 45);
+      
+      // Blue team score
+      ctx.fillStyle = '#3b82f6';
+      ctx.textAlign = 'left';
+      ctx.fillText(score.blue || 0, CANVAS_WIDTH / 2 + 15, 45);
+    }
   };
 
   const handleLeave = () => {
