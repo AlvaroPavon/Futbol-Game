@@ -208,7 +208,13 @@ class GameEngine:
         self.ball['vx'] *= self.BALL_FRICTION
         self.ball['vy'] *= self.BALL_FRICTION
         
+        # Define goal boundaries
+        goal_top = (self.CANVAS_HEIGHT - self.GOAL_HEIGHT) / 2
+        goal_bottom = goal_top + self.GOAL_HEIGHT
+        goal_depth = 30  # Same as GOAL_DEPTH in frontend
+        
         # Ball collision with top and bottom walls
+        # BUT: handle goal post collisions separately
         if self.ball['y'] - self.BALL_RADIUS < 0:
             self.ball['vy'] *= -0.8
             self.ball['y'] = self.BALL_RADIUS
@@ -217,20 +223,35 @@ class GameEngine:
             self.ball['y'] = self.CANVAS_HEIGHT - self.BALL_RADIUS
             
         # Check goals (left and right side for horizontal field)
-        goal_top = (self.CANVAS_HEIGHT - self.GOAL_HEIGHT) / 2
-        goal_bottom = goal_top + self.GOAL_HEIGHT
         goal_scored = None
         
         # LEFT goal (RED defends this side - BLUE scores here)
         if self.ball['x'] - self.BALL_RADIUS < 0:
+            # Check if ball is within goal vertical bounds
             if self.ball['y'] > goal_top and self.ball['y'] < goal_bottom:
                 self.score['blue'] += 1
                 goal_scored = 'blue'
                 # Blue scored, so RED gets kickoff
                 self.reset_positions_for_kickoff('blue')
             else:
+                # Ball hit the wall outside the goal - bounce back
                 self.ball['vx'] *= -0.8
                 self.ball['x'] = self.BALL_RADIUS
+        
+        # LEFT goal - TOP POST collision (solid boundary)
+        if self.ball['x'] <= goal_depth and self.ball['x'] >= 0:
+            # Ball is in the goal area depth
+            if self.ball['y'] - self.BALL_RADIUS < goal_top and self.ball['y'] + self.BALL_RADIUS > goal_top - 10:
+                # Ball hit top post
+                self.ball['vy'] *= -0.8
+                self.ball['y'] = goal_top - self.BALL_RADIUS
+        
+        # LEFT goal - BOTTOM POST collision (solid boundary)
+        if self.ball['x'] <= goal_depth and self.ball['x'] >= 0:
+            if self.ball['y'] + self.BALL_RADIUS > goal_bottom and self.ball['y'] - self.BALL_RADIUS < goal_bottom + 10:
+                # Ball hit bottom post
+                self.ball['vy'] *= -0.8
+                self.ball['y'] = goal_bottom + self.BALL_RADIUS
                 
         # RIGHT goal (BLUE defends this side - RED scores here)
         if self.ball['x'] + self.BALL_RADIUS > self.CANVAS_WIDTH:
@@ -242,6 +263,20 @@ class GameEngine:
             else:
                 self.ball['vx'] *= -0.8
                 self.ball['x'] = self.CANVAS_WIDTH - self.BALL_RADIUS
+        
+        # RIGHT goal - TOP POST collision (solid boundary)
+        if self.ball['x'] >= self.CANVAS_WIDTH - goal_depth and self.ball['x'] <= self.CANVAS_WIDTH:
+            if self.ball['y'] - self.BALL_RADIUS < goal_top and self.ball['y'] + self.BALL_RADIUS > goal_top - 10:
+                # Ball hit top post
+                self.ball['vy'] *= -0.8
+                self.ball['y'] = goal_top - self.BALL_RADIUS
+        
+        # RIGHT goal - BOTTOM POST collision (solid boundary)
+        if self.ball['x'] >= self.CANVAS_WIDTH - goal_depth and self.ball['x'] <= self.CANVAS_WIDTH:
+            if self.ball['y'] + self.BALL_RADIUS > goal_bottom and self.ball['y'] - self.BALL_RADIUS < goal_bottom + 10:
+                # Ball hit bottom post
+                self.ball['vy'] *= -0.8
+                self.ball['y'] = goal_bottom + self.BALL_RADIUS
                 
         # Ball collision with players - improved physics
         for player in self.players.values():
