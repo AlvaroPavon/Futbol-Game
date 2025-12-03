@@ -72,10 +72,10 @@ class GameEngine:
         if player_id in self.player_inputs:
             del self.player_inputs[player_id]
             
-    def update_player_input(self, player_id: str, keys: dict, kick: bool = False):
+    def update_player_input(self, player_id: str, keys: dict, kick: bool = False, push: bool = False):
         """Update player input"""
         if player_id in self.player_inputs:
-            self.player_inputs[player_id] = {'keys': keys, 'kick': kick}
+            self.player_inputs[player_id] = {'keys': keys, 'kick': kick, 'push': push}
             
     def update_physics(self, delta_time: float = 1/60):
         """Update game physics"""
