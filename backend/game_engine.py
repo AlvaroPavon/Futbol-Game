@@ -296,7 +296,7 @@ class GameEngine:
         
         return pushed_someone
     
-    def kick_ball(self, player: dict):
+    def kick_ball(self, player: dict, player_id: str):
         """Player kicks the ball with improved power"""
         dx = self.ball['x'] - player['x']
         dy = self.ball['y'] - player['y']
@@ -304,6 +304,9 @@ class GameEngine:
         
         if dist < self.KICK_DISTANCE:
             if dist > 0:
+                # Set kick animation
+                self.player_animations[player_id] = {'type': 'kick', 'frame': 0}
+                
                 # Normalize direction
                 nx = dx / dist
                 ny = dy / dist
