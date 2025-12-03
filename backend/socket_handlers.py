@@ -97,10 +97,6 @@ class SocketManager:
                     await self.sio.emit('error', {'message': 'Room is full'}, room=sid)
                     return
                     
-                if room.status == 'playing':
-                    await self.sio.emit('error', {'message': 'Game already started'}, room=sid)
-                    return
-                    
                 # Add player to room
                 room.players.append(PlayerInRoom(
                     user_id=sid,
