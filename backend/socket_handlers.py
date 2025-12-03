@@ -229,7 +229,12 @@ class SocketManager:
                 
                 if room_id and room_id in self.game_engines:
                     engine = self.game_engines[room_id]
-                    engine.update_player_input(sid, data.get('keys', {}), data.get('kick', False))
+                    engine.update_player_input(
+                        sid, 
+                        data.get('keys', {}), 
+                        data.get('kick', False),
+                        data.get('push', False)
+                    )
             except Exception as e:
                 logger.error(f'Error handling player input: {e}')
                 
