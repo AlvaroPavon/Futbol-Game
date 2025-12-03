@@ -94,8 +94,42 @@ class GameEngine:
                     self.player_inputs[player_id]['kick'] = False
                     
             # Update player position
-            player['x'] += player['vx']
-            player['y'] += player['vy']
+            new_x = player['x'] + player['vx']
+            new_y = player['y'] + player['vy']
+            
+            # Check collision with other players
+            can_move = True
+            for other_id, other in self.players.items():
+                if other_id != player_id:
+                    dx = new_x - other['x']
+                    dy = new_y - other['y']
+                    dist = math.sqrt(dx * dx + dy * dy)
+                    
+                    if dist < self.PLAYER_RADIUS * 2:
+                        # Collision detected - push both players apart
+                        can_move = False
+                        overlap = self.PLAYER_RADIUS * 2 - dist
+                        if dist > 0:
+                            # Push away
+                            push_x = (dx / dist) * overlap * 0.5
+                            push_y = (dy / dist) * overlap * 0.5
+                            
+                            player['x'] += push_x
+                            player['y'] += push_y
+                            other['x'] -= push_x
+                            other['y'] -= push_y
+                            
+                            # Apply friction
+                            player['vx'] *= 0.8
+                            player['vy'] *= 0.8
+            
+            if can_move:
+                player['x'] = new_x
+                player['y'] = new_y
+            
+            # Apply friction
+            player['vx'] *= 0.92
+            player['vy'] *= 0.92
             
             # Keep player in bounds
             player['x'] = max(self.PLAYER_RADIUS, min(self.CANVAS_WIDTH - self.PLAYER_RADIUS, player['x']))
