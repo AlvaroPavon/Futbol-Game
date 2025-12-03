@@ -203,6 +203,27 @@ const Game = () => {
     ctx.lineTo(goalLeft + GOAL_WIDTH, CANVAS_HEIGHT);
     ctx.stroke();
 
+    // Draw kickoff indicator
+    if (isKickoff) {
+      // Highlight center circle for kickoff
+      ctx.strokeStyle = kickoff_team === 'red' ? '#ef4444' : '#3b82f6';
+      ctx.lineWidth = 4;
+      ctx.setLineDash([10, 5]);
+      ctx.beginPath();
+      ctx.arc(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 80, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Display kickoff message
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.fillRect(CANVAS_WIDTH / 2 - 120, CANVAS_HEIGHT / 2 - 40, 240, 40);
+      
+      ctx.fillStyle = kickoff_team === 'red' ? '#ef4444' : '#3b82f6';
+      ctx.font = 'bold 20px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(`Saque: Equipo ${kickoff_team === 'red' ? 'ROJO' : 'AZUL'}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 10);
+    }
+
     // Draw players
     players.forEach(p => {
       const isControlled = p.name === user?.username;
