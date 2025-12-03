@@ -248,6 +248,24 @@ class GameEngine:
         self.ball['vx'] = 0
         self.ball['vy'] = 0
         
+    def reset_positions_for_kickoff(self, scoring_team: str):
+        """Reset all players to initial positions for kickoff"""
+        # Reset all players to their starting positions
+        for player_id, player in self.players.items():
+            if player_id in self.player_initial_positions:
+                initial_pos = self.player_initial_positions[player_id]
+                player['x'] = initial_pos['x']
+                player['y'] = initial_pos['y']
+                player['vx'] = 0
+                player['vy'] = 0
+        
+        # Reset ball to center
+        self.reset_ball()
+        
+        # Set kickoff team (opposite of who scored)
+        self.kickoff_team = 'blue' if scoring_team == 'red' else 'red'
+        self.ball_touched = False
+        
     def get_game_state(self):
         """Get current game state"""
         return {
