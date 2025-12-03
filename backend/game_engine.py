@@ -35,6 +35,7 @@ class GameEngine:
         self.kickoff_team = 'red'  # Red team starts with kickoff
         self.ball_touched = False  # Has the ball been touched after kickoff
         self.game_started = False  # Track if game has started
+        self.paused = False  # Game pause state
         
     def add_player(self, player_id: str, username: str, team: str):
         """Add a player to the game"""
