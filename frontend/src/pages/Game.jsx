@@ -130,17 +130,17 @@ const Game = () => {
     ctx.fillStyle = '#15803d';
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Draw field lines
+    // Draw field lines - HORIZONTAL FIELD
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 3;
 
     // Outer boundary
     ctx.strokeRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Center line
+    // Center line (vertical for horizontal field)
     ctx.beginPath();
-    ctx.moveTo(0, CANVAS_HEIGHT / 2);
-    ctx.lineTo(CANVAS_WIDTH, CANVAS_HEIGHT / 2);
+    ctx.moveTo(CANVAS_WIDTH / 2, 0);
+    ctx.lineTo(CANVAS_WIDTH / 2, CANVAS_HEIGHT);
     ctx.stroke();
 
     // Center circle
@@ -154,39 +154,39 @@ const Game = () => {
     ctx.arc(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Goals
-    const GOAL_WIDTH = 200;
+    // Goals - HORIZONTAL (on left and right sides)
+    const GOAL_HEIGHT = 150;
     const GOAL_DEPTH = 30;
-    const goalLeft = (CANVAS_WIDTH - GOAL_WIDTH) / 2;
+    const goalTop = (CANVAS_HEIGHT - GOAL_HEIGHT) / 2;
     
-    // Top goal area (RED defends this)
+    // LEFT goal area (RED defends this)
     ctx.strokeStyle = '#ef4444';
     ctx.lineWidth = 4;
-    ctx.strokeRect(goalLeft, 0, GOAL_WIDTH, GOAL_DEPTH);
+    ctx.strokeRect(0, goalTop, GOAL_DEPTH, GOAL_HEIGHT);
     ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
-    ctx.fillRect(goalLeft, 0, GOAL_WIDTH, GOAL_DEPTH);
+    ctx.fillRect(0, goalTop, GOAL_DEPTH, GOAL_HEIGHT);
     
-    // Top goal line
+    // Left goal line
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.moveTo(goalLeft, 0);
-    ctx.lineTo(goalLeft + GOAL_WIDTH, 0);
+    ctx.moveTo(0, goalTop);
+    ctx.lineTo(0, goalTop + GOAL_HEIGHT);
     ctx.stroke();
     
-    // Bottom goal area (BLUE defends this)
+    // RIGHT goal area (BLUE defends this)
     ctx.strokeStyle = '#3b82f6';
     ctx.lineWidth = 4;
-    ctx.strokeRect(goalLeft, CANVAS_HEIGHT - GOAL_DEPTH, GOAL_WIDTH, GOAL_DEPTH);
+    ctx.strokeRect(CANVAS_WIDTH - GOAL_DEPTH, goalTop, GOAL_DEPTH, GOAL_HEIGHT);
     ctx.fillStyle = 'rgba(59, 130, 246, 0.2)';
-    ctx.fillRect(goalLeft, CANVAS_HEIGHT - GOAL_DEPTH, GOAL_WIDTH, GOAL_DEPTH);
+    ctx.fillRect(CANVAS_WIDTH - GOAL_DEPTH, goalTop, GOAL_DEPTH, GOAL_HEIGHT);
     
-    // Bottom goal line
+    // Right goal line
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.moveTo(goalLeft, CANVAS_HEIGHT);
-    ctx.lineTo(goalLeft + GOAL_WIDTH, CANVAS_HEIGHT);
+    ctx.moveTo(CANVAS_WIDTH, goalTop);
+    ctx.lineTo(CANVAS_WIDTH, goalTop + GOAL_HEIGHT);
     ctx.stroke();
 
     // Draw kickoff indicator
