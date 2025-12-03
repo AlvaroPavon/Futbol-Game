@@ -128,7 +128,7 @@ const Game = () => {
   }, [socket, connected, navigate, roomId]);
 
   const renderGame = (ctx, gameStateData) => {
-    const { players = [], ball } = gameStateData;
+    const { players = [], ball, score } = gameStateData;
 
     if (!ball) return;
 
@@ -140,6 +140,9 @@ const Game = () => {
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 3;
 
+    // Outer boundary
+    ctx.strokeRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
     // Center line
     ctx.beginPath();
     ctx.moveTo(0, CANVAS_HEIGHT / 2);
@@ -150,20 +153,47 @@ const Game = () => {
     ctx.beginPath();
     ctx.arc(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 80, 0, Math.PI * 2);
     ctx.stroke();
+    
+    // Center spot
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 5, 0, Math.PI * 2);
+    ctx.fill();
 
     // Goals
     const GOAL_WIDTH = 200;
+    const GOAL_DEPTH = 30;
     const goalLeft = (CANVAS_WIDTH - GOAL_WIDTH) / 2;
     
-    // Top goal (blue)
-    ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';
-    ctx.fillRect(goalLeft, 0, GOAL_WIDTH, 5);
-    ctx.strokeRect(goalLeft, 0, GOAL_WIDTH, 40);
+    // Top goal area (RED defends this)
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(goalLeft, 0, GOAL_WIDTH, GOAL_DEPTH);
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+    ctx.fillRect(goalLeft, 0, GOAL_WIDTH, GOAL_DEPTH);
     
-    // Bottom goal (red)
-    ctx.fillStyle = 'rgba(239, 68, 68, 0.3)';
-    ctx.fillRect(goalLeft, CANVAS_HEIGHT - 5, GOAL_WIDTH, 5);
-    ctx.strokeRect(goalLeft, CANVAS_HEIGHT - 40, GOAL_WIDTH, 40);
+    // Top goal line
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(goalLeft, 0);
+    ctx.lineTo(goalLeft + GOAL_WIDTH, 0);
+    ctx.stroke();
+    
+    // Bottom goal area (BLUE defends this)
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(goalLeft, CANVAS_HEIGHT - GOAL_DEPTH, GOAL_WIDTH, GOAL_DEPTH);
+    ctx.fillStyle = 'rgba(59, 130, 246, 0.2)';
+    ctx.fillRect(goalLeft, CANVAS_HEIGHT - GOAL_DEPTH, GOAL_WIDTH, GOAL_DEPTH);
+    
+    // Bottom goal line
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(goalLeft, CANVAS_HEIGHT);
+    ctx.lineTo(goalLeft + GOAL_WIDTH, CANVAS_HEIGHT);
+    ctx.stroke();
 
     // Draw players
     players.forEach(p => {
