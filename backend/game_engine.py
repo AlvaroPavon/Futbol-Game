@@ -38,15 +38,18 @@ class GameEngine:
         
     def add_player(self, player_id: str, username: str, team: str):
         """Add a player to the game"""
-        # Determine spawn position based on team
+        # Determine spawn position based on team - horizontal field
+        # Red team on the left, Blue team on the right
+        team_count = len([p for p in self.players.values() if p['team'] == team])
+        
         if team == 'red':
-            team_count = len([p for p in self.players.values() if p['team'] == 'red'])
-            x = 300
-            y = 200 + team_count * 120
+            # Red team starts on the LEFT side
+            x = 200
+            y = 150 + team_count * 100  # Vertical spacing
         else:
-            team_count = len([p for p in self.players.values() if p['team'] == 'blue'])
-            x = 900
-            y = 200 + team_count * 120
+            # Blue team starts on the RIGHT side
+            x = self.CANVAS_WIDTH - 200
+            y = 150 + team_count * 100
             
         self.players[player_id] = {
             'id': len(self.players) + 1,
