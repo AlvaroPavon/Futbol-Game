@@ -17,9 +17,11 @@ class GameEngine:
         self.KICK_POWER = 15
         self.KICK_DISTANCE = self.PLAYER_RADIUS + self.BALL_RADIUS + 5
         self.GOAL_WIDTH = 200
+        self.KICKOFF_RADIUS = 80  # Radius of center circle
         
         # Game state
         self.players = {}
+        self.player_initial_positions = {}  # Store initial positions
         self.ball = {
             'x': self.CANVAS_WIDTH / 2,
             'y': self.CANVAS_HEIGHT / 2,
@@ -29,6 +31,8 @@ class GameEngine:
         self.score = {'red': 0, 'blue': 0}
         self.time_remaining = 600  # 10 minutes in seconds
         self.player_inputs = {}  # Store player inputs
+        self.kickoff_team = None  # Which team has kickoff
+        self.ball_touched = False  # Has the ball been touched after kickoff
         
     def add_player(self, player_id: str, username: str, team: str):
         """Add a player to the game"""
