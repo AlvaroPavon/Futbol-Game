@@ -211,15 +211,26 @@ class GameEngine:
         return goal_scored
         
     def kick_ball(self, player: dict):
-        """Player kicks the ball"""
+        """Player kicks the ball with improved power"""
         dx = self.ball['x'] - player['x']
         dy = self.ball['y'] - player['y']
         dist = math.sqrt(dx * dx + dy * dy)
         
         if dist < self.KICK_DISTANCE:
-            angle = math.atan2(dy, dx)
-            self.ball['vx'] = math.cos(angle) * self.KICK_POWER
-            self.ball['vy'] = math.sin(angle) * self.KICK_POWER
+            if dist > 0:
+                # Normalize direction
+                nx = dx / dist
+                ny = dy / dist
+                
+                # Add player velocity to kick
+                kick_power = self.KICK_POWER
+                player_speed = math.sqrt(player['vx']**2 + player['vy']**2)
+                
+                # Bonus power if player is moving
+                total_power = kick_power + player_speed * 0.5
+                
+                self.ball['vx'] = nx * total_power
+                self.ball['vy'] = ny * total_power
             
     def reset_ball(self):
         """Reset ball to center"""
