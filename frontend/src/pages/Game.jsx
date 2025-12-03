@@ -237,17 +237,11 @@ const Game = () => {
       ctx.fillText(p.name, p.x, p.y + 5);
     });
 
-    // Draw animations - we need to map socket IDs to players
-    // The animations object uses socket IDs as keys, so we need to find the corresponding player
+    // Draw animations - now using player names as keys
     if (animations && typeof animations === 'object') {
-      Object.entries(animations).forEach(([socketId, anim]) => {
-        // Since we don't have direct access to socket IDs in the frontend,
-        // we need to match based on player position or other criteria
-        // For now, we'll enhance the backend to include player names in animations
-        
-        // Find player by checking if they have this animation
-        // This is a workaround - ideally backend should send player identifier we can use
-        const player = players[0]; // Placeholder - will be enhanced in next iteration
+      Object.entries(animations).forEach(([playerName, anim]) => {
+        // Find player by name
+        const player = players.find(p => p.name === playerName);
         
         if (!player) return;
         
