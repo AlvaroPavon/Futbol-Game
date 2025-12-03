@@ -5,25 +5,45 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Input } from '../components/ui/input';
 import { Users, Play, Plus, LogOut, RefreshCw } from 'lucide-react';
-import { mockRooms } from '../mockData';
 import { toast } from '../hooks/use-toast';
+import { useAuth } from '../contexts/AuthContext';
+import { useSocket } from '../contexts/SocketContext';
 
 const Lobby = () => {
   const navigate = useNavigate();
-  const [rooms, setRooms] = useState(mockRooms);
-  const [username, setUsername] = useState('');
+  const { user, logout } = useAuth();
+  const { socket, connected } = useSocket();
+  const [rooms, setRooms] = useState([]);
   const [newRoomName, setNewRoomName] = useState('');
   const [maxPlayers, setMaxPlayers] = useState(6);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem('haxball_username');
-    if (!storedUsername) {
+    if (!user) {
       navigate('/login');
       return;
     }
-    setUsername(storedUsername);
-  }, [navigate]);
+
+    if (socket && connected) {
+      // Join lobby to receive room updates
+      socket.emit('join_lobby');
+
+      // Listen for room list updates
+      socket.on('room_list_update', (data) => {
+        setRooms(data.rooms);
+      });
+
+      // Listen for room created
+      socket.on('room_created', (data) => {
+        navigate(`/room/${data.room.id}`);
+      });
+
+      return () => {
+        socket.off('room_list_update');
+        socket.off('room_created');
+      };
+    }
+  }, [socket, connected, navigate, user]);
 
   const handleCreateRoom = () => {
     if (!newRoomName.trim()) {
