@@ -304,5 +304,7 @@ class GameEngine:
             'players': list(self.players.values()),
             'ball': self.ball,
             'score': self.score,
-            'time': self.time_remaining
+            'time': self.time_remaining,
+            'kickoff_team': self.kickoff_team,
+            'ball_touched': self.ball_touched
         }
