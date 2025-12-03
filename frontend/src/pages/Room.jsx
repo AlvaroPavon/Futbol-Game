@@ -16,6 +16,7 @@ const Room = () => {
   const [room, setRoom] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
@@ -23,25 +24,50 @@ const Room = () => {
       return;
     }
 
+    // Initialize room data from localStorage if available
+    const storedRoom = localStorage.getItem('current_room');
+    if (storedRoom) {
+      try {
+        const roomData = JSON.parse(storedRoom);
+        setRoom(roomData);
+        setLoading(false);
+      } catch (e) {
+        console.error('Error parsing stored room:', e);
+      }
+    }
+
     if (socket && connected) {
       // Listen for room updates
       socket.on('room_updated', (data) => {
-        setRoom(data.room);
+        console.log('Room updated:', data);
+        if (data.room) {
+          setRoom(data.room);
+          setLoading(false);
+        }
       });
 
       socket.on('player_joined', (data) => {
-        setRoom(data.room);
-        toast({
-          title: "Jugador se unió",
-          description: `${data.player.username} se unió a la sala`
-        });
+        console.log('Player joined:', data);
+        if (data.room) {
+          setRoom(data.room);
+          setLoading(false);
+        }
+        if (data.player && data.player.username) {
+          toast({
+            title: "Jugador se unió",
+            description: `${data.player.username} se unió a la sala`
+          });
+        }
       });
 
       socket.on('player_left', (data) => {
-        setRoom(data.room);
+        console.log('Player left:', data);
+        if (data.room) {
+          setRoom(data.room);
+        }
         toast({
           title: "Jugador se fue",
-          description: `${data.username} abandonó la sala`
+          description: `${data.username || 'Un jugador'} abandonó la sala`
         });
       });
 
