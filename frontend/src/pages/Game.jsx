@@ -378,13 +378,19 @@ const Game = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      
+      // Cancel animation frame
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      
       if (socket) {
         socket.off('game_state');
         socket.off('goal_scored');
         socket.off('game_over');
       }
     };
-  }, [socket, connected, navigate, roomId, renderGame]);
+  }, [socket, connected, navigate, roomId, renderGame, interpolateGameState]);
 
   const handleLeave = () => {
     navigate(`/room/${roomId}`);
