@@ -31,8 +31,9 @@ class GameEngine:
         self.score = {'red': 0, 'blue': 0}
         self.time_remaining = 600  # 10 minutes in seconds
         self.player_inputs = {}  # Store player inputs
-        self.kickoff_team = None  # Which team has kickoff
+        self.kickoff_team = 'red'  # Red team starts with kickoff
         self.ball_touched = False  # Has the ball been touched after kickoff
+        self.game_started = False  # Track if game has started
         
     def add_player(self, player_id: str, username: str, team: str):
         """Add a player to the game"""
