@@ -313,7 +313,7 @@ class GameEngine:
         return pushed_someone
     
     def kick_ball(self, player: dict, player_id: str):
-        """Player kicks the ball with improved power"""
+        """Player kicks the ball - works while moving or stationary"""
         dx = self.ball['x'] - player['x']
         dy = self.ball['y'] - player['y']
         dist = math.sqrt(dx * dx + dy * dy)
@@ -327,15 +327,17 @@ class GameEngine:
                 nx = dx / dist
                 ny = dy / dist
                 
-                # Add player velocity to kick
+                # Calculate kick power with player velocity bonus
                 kick_power = self.KICK_POWER
                 player_speed = math.sqrt(player['vx']**2 + player['vy']**2)
                 
-                # Bonus power if player is moving
-                total_power = kick_power + player_speed * 0.5
+                # Add player velocity to kick direction for more realistic physics
+                # This makes shooting while running more powerful
+                total_power = kick_power + player_speed * 0.8
                 
-                self.ball['vx'] = nx * total_power
-                self.ball['vy'] = ny * total_power
+                # Apply kick velocity
+                self.ball['vx'] = nx * total_power + player['vx'] * 0.3
+                self.ball['vy'] = ny * total_power + player['vy'] * 0.3
                 return True
         return False
             
