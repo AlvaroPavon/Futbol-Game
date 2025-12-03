@@ -63,7 +63,7 @@ class GameEngine:
         
         # Store initial position for resets
         self.player_initial_positions[player_id] = {'x': x, 'y': y}
-        self.player_inputs[player_id] = {'keys': {}, 'kick': False}
+        self.player_inputs[player_id] = {'keys': {}, 'kick': False, 'push': False}
         
     def remove_player(self, player_id: str):
         """Remove a player from the game"""
