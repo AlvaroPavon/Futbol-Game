@@ -261,6 +261,32 @@ class GameEngine:
                 
         return goal_scored
         
+    def push_players(self, pusher_id: str, pusher: dict):
+        """Push nearby players away"""
+        push_radius = self.PLAYER_RADIUS * 3  # Can push players within 3x radius
+        
+        for other_id, other in self.players.items():
+            if other_id != pusher_id:
+                dx = other['x'] - pusher['x']
+                dy = other['y'] - pusher['y']
+                dist = math.sqrt(dx * dx + dy * dy)
+                
+                if dist < push_radius and dist > 0:
+                    # Calculate push direction
+                    nx = dx / dist
+                    ny = dy / dist
+                    
+                    # Apply push force (stronger if closer)
+                    push_strength = self.PUSH_POWER * (1 - dist / push_radius)
+                    
+                    # Add push velocity to other player
+                    other['vx'] += nx * push_strength
+                    other['vy'] += ny * push_strength
+                    
+                    # Pusher gets slight recoil
+                    pusher['vx'] -= nx * push_strength * 0.3
+                    pusher['vy'] -= ny * push_strength * 0.3
+    
     def kick_ball(self, player: dict):
         """Player kicks the ball with improved power"""
         dx = self.ball['x'] - player['x']
