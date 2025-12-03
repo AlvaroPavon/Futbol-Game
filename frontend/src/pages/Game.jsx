@@ -16,7 +16,7 @@ const Game = () => {
   const animationFrameRef = useRef(null);
   const lastGameStateRef = useRef(null);
   const previousGameStateRef = useRef(null);
-  const lastUpdateTimeRef = useRef(Date.now());
+  const lastUpdateTimeRef = useRef(0);
   
   const [gameState, setGameState] = useState({
     score: { red: 0, blue: 0 },
