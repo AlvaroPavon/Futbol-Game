@@ -13,6 +13,10 @@ const Game = () => {
   const { user } = useAuth();
   const canvasRef = useRef(null);
   const keysPressed = useRef({});
+  const animationFrameRef = useRef(null);
+  const lastGameStateRef = useRef(null);
+  const previousGameStateRef = useRef(null);
+  const lastUpdateTimeRef = useRef(Date.now());
   
   const [gameState, setGameState] = useState({
     score: { red: 0, blue: 0 },
