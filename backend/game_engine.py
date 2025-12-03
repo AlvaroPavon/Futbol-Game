@@ -97,9 +97,22 @@ class GameEngine:
                 player['vx'] = dx * self.PLAYER_SPEED
                 player['vy'] = dy * self.PLAYER_SPEED
                 
-                # Handle kick
+                # Handle kick (with kickoff restrictions)
                 if self.player_inputs[player_id]['kick']:
-                    self.kick_ball(player)
+                    # Check kickoff restrictions
+                    can_kick = True
+                    if self.kickoff_team and not self.ball_touched:
+                        # Only the kickoff team can touch the ball first
+                        if player['team'] != self.kickoff_team:
+                            can_kick = False
+                    
+                    if can_kick:
+                        kicked = self.kick_ball(player)
+                        if kicked and not self.ball_touched:
+                            self.ball_touched = True  # First touch made
+                            if self.ball_touched:
+                                self.kickoff_team = None  # Clear kickoff restrictions
+                    
                     self.player_inputs[player_id]['kick'] = False
                     
             # Update player position
