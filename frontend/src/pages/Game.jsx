@@ -269,7 +269,7 @@ const Game = () => {
       if (lastGameStateRef.current) {
         const now = Date.now();
         const timeSinceUpdate = now - lastUpdateTimeRef.current;
-        const updateInterval = 1000 / 120; // Expecting 120 FPS from server
+        const updateInterval = 1000 / 90; // Expecting 90 FPS from server
         const alpha = Math.min(timeSinceUpdate / updateInterval, 1);
         
         // Interpolate between previous and current state for smooth rendering
