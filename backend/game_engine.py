@@ -119,7 +119,7 @@ class GameEngine:
                             can_kick = False
                     
                     if can_kick:
-                        kicked = self.kick_ball(player)
+                        kicked = self.kick_ball(player, player_id)
                         if kicked and not self.ball_touched:
                             self.ball_touched = True  # First touch made
                             if self.ball_touched:
