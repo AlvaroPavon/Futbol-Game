@@ -163,7 +163,7 @@ backend:
     status_history:
       - working: false
         agent: "testing"
-        comment: "CRITICAL: External Socket.IO routing misconfigured. Requests to https://futbol-online-4.preview.emergentagent.com/socket.io/ return frontend HTML instead of Socket.IO response. Internal server works correctly."
+        comment: "CRITICAL: External Socket.IO routing misconfigured. Requests to https://footballfrenzy-1.preview.emergentagent.com/socket.io/ return frontend HTML instead of Socket.IO response. Internal server works correctly."
 
   - task: "Game Engine"
     implemented: true

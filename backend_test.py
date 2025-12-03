@@ -13,7 +13,7 @@ import sys
 from typing import Dict, Any
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://futbol-online-4.preview.emergentagent.com"
+BACKEND_URL = "https://footballfrenzy-1.preview.emergentagent.com"
 API_BASE_URL = f"{BACKEND_URL}/api"
 
 class HaxBallTester:
