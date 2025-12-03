@@ -95,15 +95,18 @@ const Game = () => {
       });
 
       socket.on('game_over', (data) => {
-        setGameState(prev => ({ ...prev, gameOver: true }));
+        console.log('Game over received:', data);
+        setGameState(prev => ({ ...prev, gameOver: true, isPaused: true }));
         const winnerText = data.winner === 'draw' ? 'Empate' : 
                           `Ganó el equipo ${data.winner === 'red' ? 'Rojo' : 'Azul'}`;
         toast({
           title: "¡Juego Terminado!",
-          description: `${winnerText} - ${data.finalScore.red}:${data.finalScore.blue}`
+          description: `${winnerText} - ${data.finalScore.red}:${data.finalScore.blue}`,
+          duration: 5000
         });
         setTimeout(() => {
-          navigate(`/room/${roomId}`);
+          console.log('Navigating back to room:', roomId);
+          navigate(`/room/${roomId}`, { replace: true });
         }, 5000);
       });
     }
