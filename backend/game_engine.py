@@ -350,11 +350,20 @@ class GameEngine:
         
     def get_game_state(self):
         """Get current game state"""
+        # Update animations
+        for player_id in list(self.player_animations.keys()):
+            anim = self.player_animations[player_id]
+            anim['frame'] += 1
+            # Remove animation after 10 frames (about 0.16 seconds at 60fps)
+            if anim['frame'] > 10:
+                del self.player_animations[player_id]
+        
         return {
             'players': list(self.players.values()),
             'ball': self.ball,
             'score': self.score,
             'time': self.time_remaining,
             'kickoff_team': self.kickoff_team,
-            'ball_touched': self.ball_touched
+            'ball_touched': self.ball_touched,
+            'animations': self.player_animations.copy()
         }
