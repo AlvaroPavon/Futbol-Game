@@ -321,7 +321,7 @@ const Game = () => {
       {/* Controls Info */}
       <div className="mt-4 bg-slate-800 px-6 py-3 rounded-lg">
         <p className="text-white text-center">
-          <span className="font-bold">Controles:</span> WASD o Flechas para mover | ESPACIO o X para patear
+          <span className="font-bold">Controles:</span> WASD o Flechas = mover | ESPACIO o X = patear | SHIFT o E = empujar
         </p>
       </div>
     </div>
