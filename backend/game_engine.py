@@ -38,11 +38,13 @@ class GameEngine:
         """Add a player to the game"""
         # Determine spawn position based on team
         if team == 'red':
-            x = 200
-            y = 300 + len([p for p in self.players.values() if p['team'] == 'red']) * 80
+            team_count = len([p for p in self.players.values() if p['team'] == 'red'])
+            x = 300
+            y = 200 + team_count * 120
         else:
-            x = 1000
-            y = 300 + len([p for p in self.players.values() if p['team'] == 'blue']) * 80
+            team_count = len([p for p in self.players.values() if p['team'] == 'blue'])
+            x = 900
+            y = 200 + team_count * 120
             
         self.players[player_id] = {
             'id': len(self.players) + 1,
@@ -53,6 +55,9 @@ class GameEngine:
             'team': team,
             'name': username
         }
+        
+        # Store initial position for resets
+        self.player_initial_positions[player_id] = {'x': x, 'y': y}
         self.player_inputs[player_id] = {'keys': {}, 'kick': False}
         
     def remove_player(self, player_id: str):
