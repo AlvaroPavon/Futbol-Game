@@ -306,8 +306,8 @@ const Game = () => {
       <div className="relative">
         <canvas
           ref={canvasRef}
-          width={CANVAS_WIDTH}
-          height={CANVAS_HEIGHT}
+          width={1400}
+          height={600}
           className="border-4 border-slate-700 rounded-lg shadow-2xl"
         />
         
