@@ -44,14 +44,30 @@ class GameEngine:
         # Red team on the left, Blue team on the right
         team_count = len([p for p in self.players.values() if p['team'] == team])
         
+        # Centro vertical del campo
+        center_y = self.CANVAS_HEIGHT / 2
+        
         if team == 'red':
-            # Red team starts on the LEFT side
-            x = 200
-            y = 150 + team_count * 100  # Vertical spacing
+            # Red team starts on the LEFT side, centrado verticalmente
+            x = 250
+            # Distribuir jugadores verticalmente alrededor del centro
+            # Si es el primer jugador, va al centro
+            # Los siguientes se distribuyen arriba y abajo
+            if team_count == 0:
+                y = center_y
+            elif team_count % 2 == 1:
+                y = center_y - (team_count // 2 + 1) * 80
+            else:
+                y = center_y + (team_count // 2) * 80
         else:
-            # Blue team starts on the RIGHT side
-            x = self.CANVAS_WIDTH - 200
-            y = 150 + team_count * 100
+            # Blue team starts on the RIGHT side, centrado verticalmente
+            x = self.CANVAS_WIDTH - 250
+            if team_count == 0:
+                y = center_y
+            elif team_count % 2 == 1:
+                y = center_y - (team_count // 2 + 1) * 80
+            else:
+                y = center_y + (team_count // 2) * 80
             
         self.players[player_id] = {
             'id': len(self.players) + 1,
