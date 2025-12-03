@@ -55,28 +55,27 @@ const Lobby = () => {
       return;
     }
 
-    const newRoom = {
-      id: Date.now().toString(),
-      name: newRoomName,
-      host: username,
-      players: 1,
-      maxPlayers: maxPlayers,
-      status: 'waiting',
-      map: 'Classic'
-    };
+    if (socket && connected) {
+      socket.emit('create_room', {
+        name: newRoomName,
+        maxPlayers: maxPlayers,
+        host: user.username
+      });
 
-    setRooms([newRoom, ...rooms]);
-    setIsCreateDialogOpen(false);
-    setNewRoomName('');
-    
-    toast({
-      title: "¡Sala Creada!",
-      description: `Sala "${newRoomName}" creada exitosamente`
-    });
-
-    // Navigate to room
-    localStorage.setItem('current_room', JSON.stringify(newRoom));
-    navigate(`/room/${newRoom.id}`);
+      setIsCreateDialogOpen(false);
+      setNewRoomName('');
+      
+      toast({
+        title: "¡Sala Creada!",
+        description: `Sala "${newRoomName}" creada exitosamente`
+      });
+    } else {
+      toast({
+        title: "Error de conexión",
+        description: "No hay conexión con el servidor",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleJoinRoom = (room) => {
@@ -98,22 +97,34 @@ const Lobby = () => {
       return;
     }
 
-    localStorage.setItem('current_room', JSON.stringify(room));
-    navigate(`/room/${room.id}`);
+    if (socket && connected) {
+      socket.emit('join_room', {
+        roomId: room.id,
+        username: user.username
+      });
+      navigate(`/room/${room.id}`);
+    } else {
+      toast({
+        title: "Error de conexión",
+        description: "No hay conexión con el servidor",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('haxball_username');
-    localStorage.removeItem('haxball_user_id');
+    logout();
     navigate('/login');
   };
 
   const refreshRooms = () => {
-    toast({
-      title: "Actualizando...",
-      description: "Buscando salas disponibles"
-    });
-    // In real app, fetch from server
+    if (socket && connected) {
+      socket.emit('join_lobby');
+      toast({
+        title: "Actualizando...",
+        description: "Buscando salas disponibles"
+      });
+    }
   };
 
   return (
