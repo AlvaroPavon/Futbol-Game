@@ -167,7 +167,7 @@ const Game = () => {
 
     // Draw players
     players.forEach(p => {
-      const isControlled = p.id === gameObjects.current.controlledPlayer;
+      const isControlled = p.name === user?.username;
       
       // Player circle
       ctx.fillStyle = p.team === 'red' ? '#ef4444' : '#3b82f6';
