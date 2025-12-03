@@ -385,7 +385,15 @@ class SocketManager:
             'id': room.room_id,
             'name': room.name,
             'host': room.host,
-            'players': room.current_players,
+            'players': [
+                {
+                    'user_id': p.user_id,
+                    'username': p.username,
+                    'team': p.team,
+                    'ready': p.ready
+                } for p in room.players
+            ],
+            'current_players': room.current_players,
             'maxPlayers': room.max_players,
             'status': room.status,
             'map': 'Classic'
