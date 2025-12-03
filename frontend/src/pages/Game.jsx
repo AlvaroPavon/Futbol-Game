@@ -38,14 +38,18 @@ const Game = () => {
       
       // Send input to server
       if (socket && connected) {
+        const isKick = key === ' ' || key === 'x';
+        const isPush = key === 'shift' || key === 'e';
+        
         socket.emit('player_input', { 
           keys: keysPressed.current,
-          kick: key === ' ' || key === 'x'
+          kick: isKick,
+          push: isPush
         });
       }
       
-      // Kick with space or x
-      if (key === ' ' || key === 'x') {
+      // Prevent default for special keys
+      if (key === ' ' || key === 'x' || key === 'shift' || key === 'e') {
         e.preventDefault();
       }
     };
@@ -56,7 +60,9 @@ const Game = () => {
       // Send input to server
       if (socket && connected) {
         socket.emit('player_input', { 
-          keys: keysPressed.current
+          keys: keysPressed.current,
+          kick: false,
+          push: false
         });
       }
     };
