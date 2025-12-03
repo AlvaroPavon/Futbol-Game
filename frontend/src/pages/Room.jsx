@@ -143,10 +143,15 @@ const Room = () => {
     navigate('/lobby');
   };
 
-  if (!room) {
+  if (loading || !room) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Cargando sala...</div>
+        <div className="text-center">
+          <div className="text-white text-xl mb-4">Cargando sala...</div>
+          {!connected && (
+            <div className="text-yellow-400 text-sm">Conectando al servidor...</div>
+          )}
+        </div>
       </div>
     );
   }
