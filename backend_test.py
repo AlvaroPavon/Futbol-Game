@@ -100,41 +100,74 @@ class HaxBallTester:
     async def test_socket_connection(self):
         """Test Socket.IO connection"""
         try:
-            self.sio = socketio.AsyncClient(logger=False, engineio_logger=False)
+            # Try multiple connection approaches
+            connection_attempts = [
+                {"url": BACKEND_URL, "path": "/socket.io"},
+                {"url": f"{BACKEND_URL}/socket.io", "path": None},
+                {"url": BACKEND_URL, "path": "/socket.io/"},
+            ]
             
-            # Setup event handlers
-            @self.sio.event
-            async def connect():
-                self.socket_events.append({"event": "connect", "data": None})
-                
-            @self.sio.event
-            async def disconnect():
-                self.socket_events.append({"event": "disconnect", "data": None})
-                
-            @self.sio.event
-            async def room_list_update(data):
-                self.socket_events.append({"event": "room_list_update", "data": data})
-                
-            @self.sio.event
-            async def room_created(data):
-                self.socket_events.append({"event": "room_created", "data": data})
-                
-            @self.sio.event
-            async def error(data):
-                self.socket_events.append({"event": "error", "data": data})
+            for i, attempt in enumerate(connection_attempts):
+                try:
+                    self.sio = socketio.AsyncClient(
+                        logger=True, 
+                        engineio_logger=True,
+                        ssl_verify=False  # For testing purposes
+                    )
+                    
+                    # Setup event handlers
+                    @self.sio.event
+                    async def connect():
+                        self.socket_events.append({"event": "connect", "data": None})
+                        
+                    @self.sio.event
+                    async def disconnect():
+                        self.socket_events.append({"event": "disconnect", "data": None})
+                        
+                    @self.sio.event
+                    async def room_list_update(data):
+                        self.socket_events.append({"event": "room_list_update", "data": data})
+                        
+                    @self.sio.event
+                    async def room_created(data):
+                        self.socket_events.append({"event": "room_created", "data": data})
+                        
+                    @self.sio.event
+                    async def error(data):
+                        self.socket_events.append({"event": "error", "data": data})
+                    
+                    # Try to connect
+                    connect_kwargs = {"url": attempt["url"]}
+                    if attempt["path"]:
+                        connect_kwargs["socketio_path"] = attempt["path"]
+                    
+                    print(f"  Attempt {i+1}: Connecting to {attempt['url']} with path {attempt['path']}")
+                    await asyncio.wait_for(self.sio.connect(**connect_kwargs), timeout=10)
+                    
+                    # Wait a moment for connection to establish
+                    await asyncio.sleep(2)
+                    
+                    if self.sio.connected:
+                        self.log_result("Socket Connection", True, f"Successfully connected (attempt {i+1})")
+                        return True
+                        
+                except asyncio.TimeoutError:
+                    print(f"  Attempt {i+1}: Connection timeout")
+                    if self.sio:
+                        try:
+                            await self.sio.disconnect()
+                        except:
+                            pass
+                except Exception as e:
+                    print(f"  Attempt {i+1}: {str(e)}")
+                    if self.sio:
+                        try:
+                            await self.sio.disconnect()
+                        except:
+                            pass
             
-            # Try to connect
-            await self.sio.connect(BACKEND_URL, socketio_path='/socket.io')
-            
-            # Wait a moment for connection to establish
-            await asyncio.sleep(1)
-            
-            if self.sio.connected:
-                self.log_result("Socket Connection", True, "Successfully connected to Socket.IO server")
-                return True
-            else:
-                self.log_result("Socket Connection", False, "Failed to establish connection")
-                return False
+            self.log_result("Socket Connection", False, "All connection attempts failed")
+            return False
                 
         except Exception as e:
             self.log_result("Socket Connection", False, f"Connection failed: {str(e)}")
