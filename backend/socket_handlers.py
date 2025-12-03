@@ -278,21 +278,23 @@ class SocketManager:
             while room_id in self.game_engines:
                 start_time = asyncio.get_event_loop().time()
                 
-                # Update physics
-                goal_scored = engine.update_physics(frame_time)
+                # Only update if not paused
+                if not engine.paused:
+                    # Update physics
+                    goal_scored = engine.update_physics(frame_time)
+                    
+                    # Handle goal scored
+                    if goal_scored:
+                        await self.sio.emit('goal_scored', 
+                                          {'team': goal_scored, 'score': engine.score}, 
+                                          room=room_id)
+                        
+                    # Update time
+                    engine.time_remaining -= frame_time
                 
-                # Send game state to all players
+                # Always send game state (even when paused)
                 game_state = engine.get_game_state()
                 await self.sio.emit('game_state', game_state, room=room_id)
-                
-                # Handle goal scored
-                if goal_scored:
-                    await self.sio.emit('goal_scored', 
-                                      {'team': goal_scored, 'score': engine.score}, 
-                                      room=room_id)
-                    
-                # Update time
-                engine.time_remaining -= frame_time
                 
                 # Check if game is over
                 if engine.time_remaining <= 0:
