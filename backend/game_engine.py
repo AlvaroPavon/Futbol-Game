@@ -270,6 +270,8 @@ class GameEngine:
                 
                 self.ball['vx'] = nx * total_power
                 self.ball['vy'] = ny * total_power
+                return True
+        return False
             
     def reset_ball(self):
         """Reset ball to center"""
