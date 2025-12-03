@@ -134,9 +134,11 @@ const Game = () => {
   }, [socket, connected, navigate, roomId]);
 
   const renderGame = (ctx, gameStateData) => {
-    const { players = [], ball, score } = gameStateData;
+    const { players = [], ball, score, kickoff_team, ball_touched } = gameStateData;
 
     if (!ball) return;
+    
+    const isKickoff = kickoff_team && !ball_touched;
 
     // Clear canvas
     ctx.fillStyle = '#15803d';
