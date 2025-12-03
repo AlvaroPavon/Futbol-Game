@@ -97,80 +97,78 @@ class HaxBallTester:
         except Exception as e:
             self.log_result("Get Rooms", False, f"Request failed: {str(e)}")
     
-    async def test_socket_connection(self):
-        """Test Socket.IO connection"""
+    def test_socket_endpoint_availability(self):
+        """Test if Socket.IO endpoint is accessible"""
         try:
-            # Try multiple connection approaches
-            connection_attempts = [
-                {"url": BACKEND_URL, "path": "/socket.io"},
-                {"url": f"{BACKEND_URL}/socket.io", "path": None},
-                {"url": BACKEND_URL, "path": "/socket.io/"},
-            ]
+            # Test external URL (should fail due to routing issue)
+            external_response = self.session.get(f"{BACKEND_URL}/socket.io/?transport=polling&EIO=4")
+            external_working = "sid" in external_response.text and "upgrades" in external_response.text
             
-            for i, attempt in enumerate(connection_attempts):
-                try:
-                    self.sio = socketio.AsyncClient(
-                        logger=True, 
-                        engineio_logger=True,
-                        ssl_verify=False  # For testing purposes
-                    )
-                    
-                    # Setup event handlers
-                    @self.sio.event
-                    async def connect():
-                        self.socket_events.append({"event": "connect", "data": None})
-                        
-                    @self.sio.event
-                    async def disconnect():
-                        self.socket_events.append({"event": "disconnect", "data": None})
-                        
-                    @self.sio.event
-                    async def room_list_update(data):
-                        self.socket_events.append({"event": "room_list_update", "data": data})
-                        
-                    @self.sio.event
-                    async def room_created(data):
-                        self.socket_events.append({"event": "room_created", "data": data})
-                        
-                    @self.sio.event
-                    async def error(data):
-                        self.socket_events.append({"event": "error", "data": data})
-                    
-                    # Try to connect
-                    connect_kwargs = {"url": attempt["url"]}
-                    if attempt["path"]:
-                        connect_kwargs["socketio_path"] = attempt["path"]
-                    
-                    print(f"  Attempt {i+1}: Connecting to {attempt['url']} with path {attempt['path']}")
-                    await asyncio.wait_for(self.sio.connect(**connect_kwargs), timeout=10)
-                    
-                    # Wait a moment for connection to establish
-                    await asyncio.sleep(2)
-                    
-                    if self.sio.connected:
-                        self.log_result("Socket Connection", True, f"Successfully connected (attempt {i+1})")
-                        return True
-                        
-                except asyncio.TimeoutError:
-                    print(f"  Attempt {i+1}: Connection timeout")
-                    if self.sio:
-                        try:
-                            await self.sio.disconnect()
-                        except:
-                            pass
-                except Exception as e:
-                    print(f"  Attempt {i+1}: {str(e)}")
-                    if self.sio:
-                        try:
-                            await self.sio.disconnect()
-                        except:
-                            pass
+            # Test internal URL (should work)
+            internal_response = self.session.get("http://localhost:8001/socket.io/?transport=polling&EIO=4")
+            internal_working = "sid" in internal_response.text and "upgrades" in internal_response.text
             
-            self.log_result("Socket Connection", False, "All connection attempts failed")
-            return False
+            if internal_working and not external_working:
+                self.log_result("Socket Endpoint", False, 
+                              "Socket.IO works internally but external routing is misconfigured",
+                              {
+                                  "internal_status": "working",
+                                  "external_status": "routing_issue",
+                                  "external_response_preview": external_response.text[:200] + "..." if len(external_response.text) > 200 else external_response.text
+                              })
+            elif internal_working and external_working:
+                self.log_result("Socket Endpoint", True, "Socket.IO endpoint accessible both internally and externally")
+            elif not internal_working:
+                self.log_result("Socket Endpoint", False, "Socket.IO server not working internally")
+            else:
+                self.log_result("Socket Endpoint", False, "Unexpected Socket.IO endpoint behavior")
                 
         except Exception as e:
-            self.log_result("Socket Connection", False, f"Connection failed: {str(e)}")
+            self.log_result("Socket Endpoint", False, f"Failed to test Socket.IO endpoint: {str(e)}")
+
+    async def test_socket_connection(self):
+        """Test Socket.IO connection (internal only due to routing issues)"""
+        try:
+            # Only test internal connection since external routing is broken
+            self.sio = socketio.AsyncClient(logger=False, engineio_logger=False)
+            
+            # Setup event handlers
+            @self.sio.event
+            async def connect():
+                self.socket_events.append({"event": "connect", "data": None})
+                
+            @self.sio.event
+            async def disconnect():
+                self.socket_events.append({"event": "disconnect", "data": None})
+                
+            @self.sio.event
+            async def room_list_update(data):
+                self.socket_events.append({"event": "room_list_update", "data": data})
+                
+            @self.sio.event
+            async def room_created(data):
+                self.socket_events.append({"event": "room_created", "data": data})
+                
+            @self.sio.event
+            async def error(data):
+                self.socket_events.append({"event": "error", "data": data})
+            
+            # Try to connect to internal URL
+            print("  Testing internal Socket.IO connection...")
+            await asyncio.wait_for(self.sio.connect("http://localhost:8001"), timeout=10)
+            
+            # Wait a moment for connection to establish
+            await asyncio.sleep(2)
+            
+            if self.sio.connected:
+                self.log_result("Socket Connection (Internal)", True, "Successfully connected to internal Socket.IO server")
+                return True
+            else:
+                self.log_result("Socket Connection (Internal)", False, "Failed to establish internal connection")
+                return False
+                
+        except Exception as e:
+            self.log_result("Socket Connection (Internal)", False, f"Internal connection failed: {str(e)}")
             return False
     
     async def test_join_lobby(self):
