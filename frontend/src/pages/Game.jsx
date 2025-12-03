@@ -21,29 +21,9 @@ const Game = () => {
     gameOver: false
   });
 
-  // Game constants
-  const CANVAS_WIDTH = 1200;
+  // Game constants - horizontal field
+  const CANVAS_WIDTH = 1400;
   const CANVAS_HEIGHT = 600;
-  const PLAYER_RADIUS = 20;
-  const BALL_RADIUS = 12;
-  const PLAYER_SPEED = 4;
-  const BALL_FRICTION = 0.98;
-  const KICK_POWER = 15;
-  const KICK_DISTANCE = PLAYER_RADIUS + BALL_RADIUS + 5;
-
-  // Game objects
-  const gameObjects = useRef({
-    players: [
-      { id: 1, x: 200, y: 300, vx: 0, vy: 0, team: 'red', name: 'P1' },
-      { id: 2, x: 400, y: 200, vx: 0, vy: 0, team: 'red', name: 'P2' },
-      { id: 3, x: 400, y: 400, vx: 0, vy: 0, team: 'red', name: 'P3' },
-      { id: 4, x: 1000, y: 300, vx: 0, vy: 0, team: 'blue', name: 'P4' },
-      { id: 5, x: 800, y: 200, vx: 0, vy: 0, team: 'blue', name: 'P5' },
-      { id: 6, x: 800, y: 400, vx: 0, vy: 0, team: 'blue', name: 'P6' },
-    ],
-    ball: { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2, vx: 0, vy: 0 },
-    controlledPlayer: 1
-  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
