@@ -2,12 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { ArrowLeft, Pause, Play } from 'lucide-react';
+import { useSocket } from '../contexts/SocketContext';
+import { useAuth } from '../contexts/AuthContext';
+import { toast } from '../hooks/use-toast';
 
 const Game = () => {
   const navigate = useNavigate();
   const { roomId } = useParams();
+  const { socket, connected } = useSocket();
+  const { user } = useAuth();
   const canvasRef = useRef(null);
-  const gameLoopRef = useRef(null);
   const keysPressed = useRef({});
   
   const [gameState, setGameState] = useState({
