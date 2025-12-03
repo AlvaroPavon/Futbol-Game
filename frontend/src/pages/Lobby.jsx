@@ -238,7 +238,7 @@ const Lobby = () => {
                     <span className="text-slate-400">Jugadores:</span>
                     <span className="text-white font-semibold flex items-center gap-1">
                       <Users className="w-4 h-4" />
-                      {room.players}/{room.maxPlayers}
+                      {room.current_players || room.players}/{room.maxPlayers}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
