@@ -123,7 +123,7 @@ const Game = () => {
   }, [socket, connected, navigate, roomId]);
 
   const renderGame = (ctx, gameStateData) => {
-    const { players = [], ball, score, kickoff_team, ball_touched } = gameStateData;
+    const { players = [], ball, score, kickoff_team, ball_touched, animations = {} } = gameStateData;
 
     if (!ball) return;
     
