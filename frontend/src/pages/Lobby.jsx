@@ -139,7 +139,8 @@ const Lobby = () => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-lg">
               <Users className="w-5 h-5 text-green-400" />
-              <span className="text-white font-semibold">{username}</span>
+              <span className="text-white font-semibold">{user?.username}</span>
+              {!connected && <span className="text-red-400 text-xs ml-2">(Desconectado)</span>}
             </div>
             <Button
               variant="outline"
