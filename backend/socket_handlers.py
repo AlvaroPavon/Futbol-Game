@@ -234,6 +234,22 @@ class SocketManager:
             except Exception as e:
                 logger.error(f'Error handling player input: {e}')
                 
+        @self.sio.on('toggle_pause')
+        async def toggle_pause(sid, data):
+            """Toggle game pause"""
+            try:
+                session = await self.sio.get_session(sid)
+                room_id = data.get('roomId')
+                paused = data.get('paused', False)
+                
+                if room_id and room_id in self.game_engines:
+                    engine = self.game_engines[room_id]
+                    engine.paused = paused
+                    await self.sio.emit('game_paused', {'paused': paused}, room=room_id)
+                    logger.info(f'Game {"paused" if paused else "resumed"} in room {room_id}')
+            except Exception as e:
+                logger.error(f'Error toggling pause: {e}')
+        
         @self.sio.on('chat_message')
         async def chat_message(sid, data):
             """Handle chat messages"""
