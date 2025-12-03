@@ -88,7 +88,8 @@ const Lobby = () => {
       return;
     }
 
-    if (room.players >= room.maxPlayers) {
+    const currentPlayers = room.current_players || room.players || 0;
+    if (currentPlayers >= room.maxPlayers) {
       toast({
         title: "Sala llena",
         description: "Esta sala está llena",
