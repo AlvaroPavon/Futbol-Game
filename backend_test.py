@@ -303,6 +303,7 @@ async def main():
     
     # Test WebSocket functionality
     print("\n🔌 Testing WebSocket Functionality...")
+    tester.test_socket_endpoint_availability()
     socket_connected = await tester.test_socket_connection()
     
     if socket_connected:
@@ -310,7 +311,7 @@ async def main():
         await tester.test_create_room()
         await tester.test_socket_disconnect()
     else:
-        print("⚠️  Skipping socket tests due to connection failure")
+        print("⚠️  Skipping socket event tests due to connection failure")
     
     # Print summary
     success = tester.print_summary()
