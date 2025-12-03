@@ -156,10 +156,12 @@ const Room = () => {
     );
   }
 
-  const redTeam = room.players?.filter(p => p.team === 'red') || [];
-  const blueTeam = room.players?.filter(p => p.team === 'blue') || [];
+  // Safely extract team data
+  const players = room.players || [];
+  const redTeam = players.filter(p => p.team === 'red');
+  const blueTeam = players.filter(p => p.team === 'blue');
   const isHost = room.host === user?.username;
-  const currentPlayer = room.players?.find(p => p.username === user?.username);
+  const currentPlayer = players.find(p => p.username === user?.username);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
