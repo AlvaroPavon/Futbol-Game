@@ -31,6 +31,32 @@ const Game = () => {
   const PLAYER_RADIUS = 20;
   const BALL_RADIUS = 12;
 
+  // Interpolate between two game states for smooth rendering
+  const interpolateGameState = useCallback((prevState, currentState, alpha) => {
+    if (!prevState || !currentState) return currentState;
+    
+    const interpolated = {
+      ...currentState,
+      players: currentState.players.map((player, index) => {
+        const prevPlayer = prevState.players?.find(p => p.name === player.name);
+        if (!prevPlayer) return player;
+        
+        return {
+          ...player,
+          x: prevPlayer.x + (player.x - prevPlayer.x) * alpha,
+          y: prevPlayer.y + (player.y - prevPlayer.y) * alpha,
+        };
+      }),
+      ball: {
+        ...currentState.ball,
+        x: prevState.ball ? prevState.ball.x + (currentState.ball.x - prevState.ball.x) * alpha : currentState.ball.x,
+        y: prevState.ball ? prevState.ball.y + (currentState.ball.y - prevState.ball.y) * alpha : currentState.ball.y,
+      }
+    };
+    
+    return interpolated;
+  }, []);
+
   const renderGame = useCallback((ctx, gameStateData) => {
     const { players = [], ball, score, kickoff_team, ball_touched, animations = {} } = gameStateData;
 
