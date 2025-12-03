@@ -273,7 +273,11 @@ const Game = () => {
   };
 
   const togglePause = () => {
-    setGameState(prev => ({ ...prev, isPaused: !prev.isPaused }));
+    if (socket && connected) {
+      const newPauseState = !gameState.isPaused;
+      setGameState(prev => ({ ...prev, isPaused: newPauseState }));
+      socket.emit('toggle_pause', { roomId, paused: newPauseState });
+    }
   };
 
   return (
