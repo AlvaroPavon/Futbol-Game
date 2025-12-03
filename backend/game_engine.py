@@ -135,57 +135,78 @@ class GameEngine:
             player['x'] = max(self.PLAYER_RADIUS, min(self.CANVAS_WIDTH - self.PLAYER_RADIUS, player['x']))
             player['y'] = max(self.PLAYER_RADIUS, min(self.CANVAS_HEIGHT - self.PLAYER_RADIUS, player['y']))
             
-        # Update ball
+        # Update ball with improved physics
         self.ball['x'] += self.ball['vx']
         self.ball['y'] += self.ball['vy']
         self.ball['vx'] *= self.BALL_FRICTION
         self.ball['vy'] *= self.BALL_FRICTION
         
-        # Ball collision with walls
-        if self.ball['x'] - self.BALL_RADIUS < 0 or self.ball['x'] + self.BALL_RADIUS > self.CANVAS_WIDTH:
+        # Ball collision with walls (left and right)
+        if self.ball['x'] - self.BALL_RADIUS < 0:
             self.ball['vx'] *= -0.8
-            self.ball['x'] = max(self.BALL_RADIUS, min(self.CANVAS_WIDTH - self.BALL_RADIUS, self.ball['x']))
+            self.ball['x'] = self.BALL_RADIUS
+        elif self.ball['x'] + self.BALL_RADIUS > self.CANVAS_WIDTH:
+            self.ball['vx'] *= -0.8
+            self.ball['x'] = self.CANVAS_WIDTH - self.BALL_RADIUS
             
-        # Check goals
+        # Check goals (top and bottom)
         goal_left = (self.CANVAS_WIDTH - self.GOAL_WIDTH) / 2
         goal_right = goal_left + self.GOAL_WIDTH
         goal_scored = None
         
+        # Top goal (scores for RED team - blue defends)
         if self.ball['y'] - self.BALL_RADIUS < 0:
-            if self.ball['x'] > goal_left and self.ball['x'] < goal_right:
-                self.score['blue'] += 1
-                goal_scored = 'blue'
-                self.reset_ball()
-            else:
-                self.ball['vy'] *= -0.8
-                self.ball['y'] = self.BALL_RADIUS
-                
-        if self.ball['y'] + self.BALL_RADIUS > self.CANVAS_HEIGHT:
             if self.ball['x'] > goal_left and self.ball['x'] < goal_right:
                 self.score['red'] += 1
                 goal_scored = 'red'
                 self.reset_ball()
             else:
                 self.ball['vy'] *= -0.8
+                self.ball['y'] = self.BALL_RADIUS
+                
+        # Bottom goal (scores for BLUE team - red defends)
+        if self.ball['y'] + self.BALL_RADIUS > self.CANVAS_HEIGHT:
+            if self.ball['x'] > goal_left and self.ball['x'] < goal_right:
+                self.score['blue'] += 1
+                goal_scored = 'blue'
+                self.reset_ball()
+            else:
+                self.ball['vy'] *= -0.8
                 self.ball['y'] = self.CANVAS_HEIGHT - self.BALL_RADIUS
                 
-        # Ball collision with players
+        # Ball collision with players - improved physics
         for player in self.players.values():
             dx = self.ball['x'] - player['x']
             dy = self.ball['y'] - player['y']
             dist = math.sqrt(dx * dx + dy * dy)
             
             if dist < self.PLAYER_RADIUS + self.BALL_RADIUS:
-                angle = math.atan2(dy, dx)
-                speed = math.sqrt(self.ball['vx']**2 + self.ball['vy']**2)
-                
-                self.ball['vx'] = math.cos(angle) * (speed + 2)
-                self.ball['vy'] = math.sin(angle) * (speed + 2)
-                
-                # Separate ball from player
-                overlap = self.PLAYER_RADIUS + self.BALL_RADIUS - dist
-                self.ball['x'] += math.cos(angle) * overlap
-                self.ball['y'] += math.sin(angle) * overlap
+                # Collision response with momentum transfer
+                if dist > 0:
+                    # Normalize
+                    nx = dx / dist
+                    ny = dy / dist
+                    
+                    # Relative velocity
+                    dvx = self.ball['vx'] - player['vx']
+                    dvy = self.ball['vy'] - player['vy']
+                    
+                    # Velocity along normal
+                    dvn = dvx * nx + dvy * ny
+                    
+                    # Don't process if moving apart
+                    if dvn < 0:
+                        # Bounce coefficient
+                        bounce = 1.5
+                        
+                        # Apply impulse
+                        self.ball['vx'] += -dvn * nx * bounce + player['vx'] * 0.5
+                        self.ball['vy'] += -dvn * ny * bounce + player['vy'] * 0.5
+                        
+                        # Separate ball from player
+                        overlap = self.PLAYER_RADIUS + self.BALL_RADIUS - dist
+                        self.ball['x'] += nx * overlap
+                        self.ball['y'] += ny * overlap
                 
         return goal_scored
         
