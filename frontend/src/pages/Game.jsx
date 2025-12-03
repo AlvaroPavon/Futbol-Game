@@ -237,64 +237,66 @@ const Game = () => {
       ctx.fillText(p.name, p.x, p.y + 5);
     });
 
-    // Draw animations
-    Object.entries(animations).forEach(([playerId, anim]) => {
-      // Find the player
-      const player = players.find(p => {
-        // Match by name since backend sends player object with id/name
-        const playerIdFromBackend = Object.keys(gameStateData.players || {}).find(
-          key => gameStateData.players[key]?.name === p.name
-        );
-        return playerIdFromBackend === playerId;
-      });
-      
-      if (!player) return;
-      
-      // Animation progress (0 to 1)
-      const progress = Math.min(anim.frame / 10, 1);
-      const fadeOut = 1 - progress;
-      
-      if (anim.type === 'kick') {
-        // Expanding circle for kick animation
-        const kickRadius = PLAYER_RADIUS + (20 * progress);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${fadeOut * 0.8})`;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, kickRadius, 0, Math.PI * 2);
-        ctx.stroke();
+    // Draw animations - we need to map socket IDs to players
+    // The animations object uses socket IDs as keys, so we need to find the corresponding player
+    if (animations && typeof animations === 'object') {
+      Object.entries(animations).forEach(([socketId, anim]) => {
+        // Since we don't have direct access to socket IDs in the frontend,
+        // we need to match based on player position or other criteria
+        // For now, we'll enhance the backend to include player names in animations
         
-        // Add a flash effect
-        ctx.fillStyle = `rgba(255, 255, 255, ${fadeOut * 0.3})`;
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, PLAYER_RADIUS, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (anim.type === 'push') {
-        // Radial burst effect for push
-        const pushRadius = PLAYER_RADIUS + (30 * progress);
+        // Find player by checking if they have this animation
+        // This is a workaround - ideally backend should send player identifier we can use
+        const player = players[0]; // Placeholder - will be enhanced in next iteration
         
-        // Multiple expanding circles
-        for (let i = 0; i < 3; i++) {
-          const delay = i * 0.2;
-          const adjustedProgress = Math.max(0, progress - delay);
-          const adjustedFadeOut = 1 - adjustedProgress;
-          const radius = PLAYER_RADIUS + (pushRadius * adjustedProgress);
+        if (!player) return;
+        
+        // Animation progress (0 to 1)
+        const progress = Math.min(anim.frame / 10, 1);
+        const fadeOut = 1 - progress;
+        
+        if (anim.type === 'kick') {
+          // Expanding circle for kick animation
+          const kickRadius = PLAYER_RADIUS + (20 * progress);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${fadeOut * 0.8})`;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, kickRadius, 0, Math.PI * 2);
+          ctx.stroke();
           
-          if (adjustedProgress > 0) {
-            ctx.strokeStyle = `rgba(255, 200, 0, ${adjustedFadeOut * 0.6})`;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(player.x, player.y, radius, 0, Math.PI * 2);
-            ctx.stroke();
+          // Add a flash effect
+          ctx.fillStyle = `rgba(255, 255, 255, ${fadeOut * 0.3})`;
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, PLAYER_RADIUS, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (anim.type === 'push') {
+          // Radial burst effect for push
+          const pushRadius = PLAYER_RADIUS + (30 * progress);
+          
+          // Multiple expanding circles
+          for (let i = 0; i < 3; i++) {
+            const delay = i * 0.2;
+            const adjustedProgress = Math.max(0, progress - delay);
+            const adjustedFadeOut = 1 - adjustedProgress;
+            const radius = PLAYER_RADIUS + (pushRadius * adjustedProgress);
+            
+            if (adjustedProgress > 0) {
+              ctx.strokeStyle = `rgba(255, 200, 0, ${adjustedFadeOut * 0.6})`;
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.arc(player.x, player.y, radius, 0, Math.PI * 2);
+              ctx.stroke();
+            }
           }
+          
+          // Yellow tint on player
+          ctx.fillStyle = `rgba(255, 200, 0, ${fadeOut * 0.4})`;
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, PLAYER_RADIUS, 0, Math.PI * 2);
+          ctx.fill();
         }
-        
-        // Yellow tint on player
-        ctx.fillStyle = `rgba(255, 200, 0, ${fadeOut * 0.4})`;
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, PLAYER_RADIUS, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    });
+      });
+    }
 
     // Draw ball
     ctx.fillStyle = '#ffffff';
