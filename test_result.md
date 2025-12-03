@@ -271,8 +271,11 @@ metadata:
 test_plan:
   current_focus:
     - "Socket.IO External Routing"
+    - "Room Creation and Management"
+    - "Kick and Push Animations"
   stuck_tasks:
     - "Socket.IO External Routing"
+    - "Room Creation and Management"
   test_all: false
   test_priority: "high_first"
 
