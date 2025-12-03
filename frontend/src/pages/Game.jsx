@@ -332,7 +332,12 @@ const Game = () => {
     // Listen for game state updates from server
     if (socket && connected) {
       socket.on('game_state', (gameStateFromServer) => {
-        renderGame(ctx, gameStateFromServer);
+        // Store states for interpolation
+        previousGameStateRef.current = lastGameStateRef.current;
+        lastGameStateRef.current = gameStateFromServer;
+        lastUpdateTimeRef.current = Date.now();
+        
+        // Update UI state
         setGameState(prev => ({
           ...prev,
           score: gameStateFromServer.score || prev.score,
