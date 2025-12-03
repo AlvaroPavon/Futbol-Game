@@ -282,3 +282,5 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "Backend API testing completed. REST endpoints working correctly. Socket.IO server implementation is correct and functional internally, but external routing configuration needs to be fixed to properly route Socket.IO requests to backend instead of frontend."
+  - agent: "testing"
+    message: "Frontend animation testing attempted but blocked by Socket.IO connection failure. Login flow and lobby work correctly, but room creation fails with 'WebSocket is closed before the connection is established'. Animation code is properly implemented in both frontend (Game.jsx) and backend (game_engine.py) with kick (white expanding circle) and push (yellow burst) effects. Cannot verify animations until Socket.IO routing is fixed."
