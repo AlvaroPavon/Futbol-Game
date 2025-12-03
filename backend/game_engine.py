@@ -267,6 +267,10 @@ class GameEngine:
         """Push nearby players away"""
         push_radius = self.PLAYER_RADIUS * 3  # Can push players within 3x radius
         
+        # Set push animation
+        self.player_animations[pusher_id] = {'type': 'push', 'frame': 0}
+        
+        pushed_someone = False
         for other_id, other in self.players.items():
             if other_id != pusher_id:
                 dx = other['x'] - pusher['x']
@@ -274,6 +278,7 @@ class GameEngine:
                 dist = math.sqrt(dx * dx + dy * dy)
                 
                 if dist < push_radius and dist > 0:
+                    pushed_someone = True
                     # Calculate push direction
                     nx = dx / dist
                     ny = dy / dist
@@ -288,6 +293,8 @@ class GameEngine:
                     # Pusher gets slight recoil
                     pusher['vx'] -= nx * push_strength * 0.3
                     pusher['vy'] -= ny * push_strength * 0.3
+        
+        return pushed_someone
     
     def kick_ball(self, player: dict):
         """Player kicks the ball with improved power"""
