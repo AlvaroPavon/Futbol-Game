@@ -358,6 +358,13 @@ class GameEngine:
             if anim['frame'] > 10:
                 del self.player_animations[player_id]
         
+        # Prepare animations with player names for frontend
+        animations_with_names = {}
+        for player_id, anim in self.player_animations.items():
+            if player_id in self.players:
+                player_name = self.players[player_id]['name']
+                animations_with_names[player_name] = anim
+        
         return {
             'players': list(self.players.values()),
             'ball': self.ball,
@@ -365,5 +372,5 @@ class GameEngine:
             'time': self.time_remaining,
             'kickoff_team': self.kickoff_team,
             'ball_touched': self.ball_touched,
-            'animations': self.player_animations.copy()
+            'animations': animations_with_names
         }
