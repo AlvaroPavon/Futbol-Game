@@ -4,13 +4,15 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { toast } from '../hooks/use-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     
     if (!username.trim()) {
@@ -33,10 +35,10 @@ const Login = () => {
 
     setIsLoading(true);
     
-    // Mock login - store username in localStorage
-    setTimeout(() => {
-      localStorage.setItem('haxball_username', username);
-      localStorage.setItem('haxball_user_id', 'user_' + Date.now());
+    // Real login with backend
+    const result = await login(username);
+    
+    if (result.success) {
       toast({
         title: "¡Bienvenido!",
         description: `Hola ${username}, iniciando sesión...`
@@ -44,7 +46,14 @@ const Login = () => {
       setTimeout(() => {
         navigate('/lobby');
       }, 500);
-    }, 1000);
+    } else {
+      toast({
+        title: "Error",
+        description: "No se pudo iniciar sesión. Intenta de nuevo.",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+    }
   };
 
   return (
