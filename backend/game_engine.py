@@ -34,8 +34,9 @@ class GameEngine:
         self.PLAYER_SPEED = 2.5  # Reducido de 4 a 2.5 para mejor control
         self.BALL_FRICTION = 0.98
         self.KICK_POWER = 15
-        self.PUSH_POWER = 15  # Aumentado de 8 a 15 para empujar más fuerte
+        self.PUSH_POWER = 20  # Aumentado a 20 para alejar más (antes 15)
         self.KICK_DISTANCE = self.PLAYER_RADIUS + self.BALL_RADIUS + 5
+        self.PUSH_DISTANCE = 60  # Distancia para empujar jugadores
         self.GOAL_HEIGHT = 150  # Goal height (vertical)
         self.KICKOFF_RADIUS = 80  # Radius of center circle
         
