@@ -358,6 +358,10 @@ class GameEngine:
         
         # Check power-up collection
         for player_id, player in self.players.items():
+            # Skip if player already has a power-up active
+            if player_id in self.player_powerups:
+                continue
+                
             for powerup in self.powerups[:]:  # Copy list to allow removal
                 dx = player['x'] - powerup.x
                 dy = player['y'] - powerup.y
