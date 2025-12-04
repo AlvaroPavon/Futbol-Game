@@ -62,7 +62,9 @@ class GameEngine:
         self.powerups = []  # Active power-ups on field
         self.player_powerups = {}  # Active power-ups per player {player_id: {'type': str, 'expires': float}}
         self.last_powerup_spawn = time.time()
-        self.powerup_spawn_interval = 15  # Spawn power-up every 15 seconds
+        self.powerup_spawn_interval = 25  # Spawn power-up every 25 seconds (antes 15)
+        self.powerup_duration = 10  # Power-up dura 10 segundos en el jugador
+        self.powerup_field_duration = 20  # Power-up dura 20 segundos en el campo (antes 30)
         self.powerup_types = [
             'super_kick',    # Disparo más fuerte (2x)
             'mega_push',     # Empuje más fuerte (2x)
