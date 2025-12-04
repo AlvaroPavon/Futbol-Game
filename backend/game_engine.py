@@ -486,6 +486,13 @@ class GameEngine:
                 player_name = self.players[player_id]['name']
                 animations_with_names[player_name] = anim
         
+        # Prepare player powerups for frontend
+        player_powerups_for_frontend = {}
+        for player_id, powerup_data in self.player_powerups.items():
+            if player_id in self.players:
+                player_name = self.players[player_id]['name']
+                player_powerups_for_frontend[player_name] = powerup_data['type']
+        
         return {
             'players': list(self.players.values()),
             'ball': self.ball,
@@ -493,5 +500,45 @@ class GameEngine:
             'time': self.time_remaining,
             'kickoff_team': self.kickoff_team,
             'ball_touched': self.ball_touched,
-            'animations': animations_with_names
+            'animations': animations_with_names,
+            'powerups': [p.to_dict() for p in self.powerups],
+            'player_powerups': player_powerups_for_frontend
+        }
+    
+    def update_powerups(self):
+        """Update power-ups: spawn new ones and expire old ones"""
+        current_time = time.time()
+        
+        # Spawn new power-up if it's time
+        if current_time - self.last_powerup_spawn > self.powerup_spawn_interval:
+            self.spawn_powerup()
+            self.last_powerup_spawn = current_time
+        
+        # Remove old power-ups (after 30 seconds)
+        self.powerups = [p for p in self.powerups if current_time - p.spawn_time < 30]
+        
+        # Expire player power-ups
+        for player_id in list(self.player_powerups.keys()):
+            if current_time > self.player_powerups[player_id]['expires']:
+                del self.player_powerups[player_id]
+    
+    def spawn_powerup(self):
+        """Spawn a random power-up at a random location"""
+        # Random position avoiding goal areas
+        margin = 100
+        x = random.randint(margin, self.CANVAS_WIDTH - margin)
+        y = random.randint(margin, self.CANVAS_HEIGHT - margin)
+        
+        # Random type
+        powerup_type = random.choice(self.powerup_types)
+        
+        powerup = PowerUp(x, y, powerup_type)
+        self.powerups.append(powerup)
+    
+    def collect_powerup(self, player_id: str, powerup: PowerUp):
+        """Player collects a power-up"""
+        # Give power-up to player for 10 seconds
+        self.player_powerups[player_id] = {
+            'type': powerup.type,
+            'expires': time.time() + 10  # 10 seconds duration
         }
