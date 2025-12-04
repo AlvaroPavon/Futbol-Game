@@ -543,8 +543,8 @@ class GameEngine:
     
     def collect_powerup(self, player_id: str, powerup: PowerUp):
         """Player collects a power-up"""
-        # Give power-up to player for 10 seconds
+        # Give power-up to player for exactly 10 seconds
         self.player_powerups[player_id] = {
             'type': powerup.type,
-            'expires': time.time() + 10  # 10 seconds duration
+            'expires': time.time() + self.powerup_duration  # Usar la constante (10 segundos)
         }
