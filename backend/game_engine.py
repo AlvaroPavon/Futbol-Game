@@ -350,6 +350,22 @@ class GameEngine:
                         overlap = self.PLAYER_RADIUS + self.BALL_RADIUS - dist
                         self.ball['x'] += nx * overlap
                         self.ball['y'] += ny * overlap
+        
+        # Update power-ups system
+        self.update_powerups()
+        
+        # Check power-up collection
+        for player_id, player in self.players.items():
+            for powerup in self.powerups[:]:  # Copy list to allow removal
+                dx = player['x'] - powerup.x
+                dy = player['y'] - powerup.y
+                dist = math.sqrt(dx * dx + dy * dy)
+                
+                if dist < self.PLAYER_RADIUS + powerup.radius:
+                    # Player collected the power-up
+                    self.collect_powerup(player_id, powerup)
+                    self.powerups.remove(powerup)
+                    break
                 
         return goal_scored
         
