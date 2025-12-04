@@ -83,12 +83,22 @@ const Room = () => {
         navigate(`/game/${roomId}`);
       });
 
+      socket.on('game_over', (data) => {
+        console.log('Game over event received in Room:', data);
+        // Recargar la información de la sala después del juego
+        socket.emit('get_room', { roomId });
+      });
+
+      // Solicitar información actualizada de la sala al montar el componente
+      socket.emit('get_room', { roomId });
+
       return () => {
         socket.off('room_updated');
         socket.off('player_joined');
         socket.off('player_left');
         socket.off('chat_message');
         socket.off('game_started');
+        socket.off('game_over');
       };
     }
   }, [socket, connected, navigate, user, roomId]);
