@@ -138,6 +138,22 @@ class SocketManager:
                     await self.remove_player_from_room(sid, room_id)
             except Exception as e:
                 logger.error(f'Error leaving room: {e}')
+        
+        @self.sio.on('get_room')
+        async def get_room(sid, data):
+            """Get current room information"""
+            try:
+                room_id = data.get('roomId')
+                
+                if room_id and room_id in self.rooms:
+                    room = self.rooms[room_id]
+                    await self.sio.emit('room_updated', {'room': self.room_to_dict(room)}, room=sid)
+                    logger.info(f'Room info sent to {sid} for room {room_id}')
+                else:
+                    logger.warning(f'Room {room_id} not found for get_room request')
+                    await self.sio.emit('error', {'message': 'Room not found'}, room=sid)
+            except Exception as e:
+                logger.error(f'Error getting room info: {e}')
                 
         @self.sio.on('change_team')
         async def change_team(sid, data):
