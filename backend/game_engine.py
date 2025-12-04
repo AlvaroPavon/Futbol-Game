@@ -148,16 +148,22 @@ class GameEngine:
                 if dx != 0 and dy != 0:
                     dx *= 0.707
                     dy *= 0.707
-                    
-                player['vx'] = dx * self.PLAYER_SPEED
-                player['vy'] = dy * self.PLAYER_SPEED
                 
-                # Handle push
+                # Apply speed with power-up bonus
+                speed = self.PLAYER_SPEED
+                if player_id in self.player_powerups:
+                    if self.player_powerups[player_id]['type'] == 'speed_boost':
+                        speed *= 1.5  # 50% más rápido
+                    
+                player['vx'] = dx * speed
+                player['vy'] = dy * speed
+                
+                # Handle push - intent system: always consume, but only works if close
                 if self.player_inputs[player_id]['push']:
                     self.push_players(player_id, player)
                     self.player_inputs[player_id]['push'] = False
                 
-                # Handle kick (with kickoff restrictions)
+                # Handle kick - intent system: always consume, but only works if close
                 if self.player_inputs[player_id]['kick']:
                     # Check kickoff restrictions
                     can_kick = True
@@ -173,6 +179,7 @@ class GameEngine:
                             if self.ball_touched:
                                 self.kickoff_team = None  # Clear kickoff restrictions
                     
+                    # Always consume the kick input (intent system)
                     self.player_inputs[player_id]['kick'] = False
                     
             # Update player position
