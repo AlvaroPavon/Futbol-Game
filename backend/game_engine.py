@@ -520,10 +520,10 @@ class GameEngine:
             self.spawn_powerup()
             self.last_powerup_spawn = current_time
         
-        # Remove old power-ups (after 30 seconds)
-        self.powerups = [p for p in self.powerups if current_time - p.spawn_time < 30]
+        # Remove old power-ups from field (usar la nueva constante)
+        self.powerups = [p for p in self.powerups if current_time - p.spawn_time < self.powerup_field_duration]
         
-        # Expire player power-ups
+        # Expire player power-ups (exactamente 10 segundos)
         for player_id in list(self.player_powerups.keys()):
             if current_time > self.player_powerups[player_id]['expires']:
                 del self.player_powerups[player_id]
