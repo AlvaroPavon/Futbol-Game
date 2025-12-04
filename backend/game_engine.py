@@ -371,10 +371,16 @@ class GameEngine:
         
     def push_players(self, pusher_id: str, pusher: dict):
         """Push nearby players away"""
-        push_radius = self.PLAYER_RADIUS * 3  # Can push players within 3x radius
+        push_radius = self.PUSH_DISTANCE  # Use defined push distance
         
         # Set push animation
         self.player_animations[pusher_id] = {'type': 'push', 'frame': 0}
+        
+        # Calculate push power with power-up bonus
+        push_power = self.PUSH_POWER
+        if pusher_id in self.player_powerups:
+            if self.player_powerups[pusher_id]['type'] == 'mega_push':
+                push_power *= 2  # Doble de fuerza!
         
         pushed_someone = False
         for other_id, other in self.players.items():
@@ -390,15 +396,15 @@ class GameEngine:
                     ny = dy / dist
                     
                     # Apply push force (stronger if closer)
-                    push_strength = self.PUSH_POWER * (1 - dist / push_radius)
+                    push_strength = push_power * (1 - dist / push_radius)
                     
                     # Add push velocity to other player
                     other['vx'] += nx * push_strength
                     other['vy'] += ny * push_strength
                     
                     # Pusher gets slight recoil
-                    pusher['vx'] -= nx * push_strength * 0.3
-                    pusher['vy'] -= ny * push_strength * 0.3
+                    pusher['vx'] -= nx * push_strength * 0.2
+                    pusher['vy'] -= ny * push_strength * 0.2
         
         return pushed_someone
     
