@@ -414,6 +414,7 @@ class GameEngine:
         dy = self.ball['y'] - player['y']
         dist = math.sqrt(dx * dx + dy * dy)
         
+        # Only kick if close enough (intent system - button press accepted always, but only works if close)
         if dist < self.KICK_DISTANCE:
             if dist > 0:
                 # Set kick animation
@@ -425,6 +426,12 @@ class GameEngine:
                 
                 # Calculate kick power with player velocity bonus
                 kick_power = self.KICK_POWER
+                
+                # Apply power-up bonus
+                if player_id in self.player_powerups:
+                    if self.player_powerups[player_id]['type'] == 'super_kick':
+                        kick_power *= 2.0  # Doble de potencia!
+                
                 player_speed = math.sqrt(player['vx']**2 + player['vy']**2)
                 
                 # Add player velocity to kick direction for more realistic physics
