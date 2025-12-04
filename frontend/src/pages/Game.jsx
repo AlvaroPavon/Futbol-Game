@@ -168,6 +168,22 @@ const Game = () => {
       ctx.font = 'bold 12px Arial';
       ctx.textAlign = 'center';
       ctx.fillText(p.name, p.x, p.y + 5);
+      
+      // Power-up indicator
+      if (player_powerups[p.name]) {
+        const powerupIcons = {
+          'super_kick': '⚡',
+          'mega_push': '💥',
+          'speed_boost': '💨',
+          'giant': '⭐'
+        };
+        const icon = powerupIcons[player_powerups[p.name]] || '?';
+        
+        // Draw power-up icon above player
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText(icon, p.x, p.y - PLAYER_RADIUS - 10);
+      }
     });
 
     // Draw animations - now using player names as keys
