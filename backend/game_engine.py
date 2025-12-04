@@ -1,6 +1,25 @@
 import math
 from typing import List, Dict
 import asyncio
+import random
+import time
+
+class PowerUp:
+    """Power-up item that spawns on the field"""
+    def __init__(self, x: float, y: float, powerup_type: str):
+        self.x = x
+        self.y = y
+        self.type = powerup_type
+        self.radius = 15
+        self.spawn_time = time.time()
+        
+    def to_dict(self):
+        return {
+            'x': self.x,
+            'y': self.y,
+            'type': self.type,
+            'radius': self.radius
+        }
 
 class GameEngine:
     def __init__(self, room_id: str):
