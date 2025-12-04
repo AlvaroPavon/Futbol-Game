@@ -420,12 +420,15 @@ const Game = () => {
         toast({
           title: "¡Juego Terminado!",
           description: `${winnerText} - ${data.finalScore.red}:${data.finalScore.blue}`,
-          duration: 5000
+          duration: 3000
         });
+        
+        // Redirigir inmediatamente a la sala
         setTimeout(() => {
-          console.log('Navigating back to room:', roomId);
+          console.log('Navigating back to room lobby:', roomId);
+          // Usar replace para que no puedan volver atrás con el navegador
           navigate(`/room/${roomId}`, { replace: true });
-        }, 5000);
+        }, 3000); // Reducido de 5 a 3 segundos
       });
     }
 
