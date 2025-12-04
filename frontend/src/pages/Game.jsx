@@ -58,7 +58,7 @@ const Game = () => {
   }, []);
 
   const renderGame = useCallback((ctx, gameStateData) => {
-    const { players = [], ball, score, kickoff_team, ball_touched, animations = {} } = gameStateData;
+    const { players = [], ball, score, kickoff_team, ball_touched, animations = {}, powerups = [], player_powerups = {} } = gameStateData;
 
     if (!ball) return;
     
