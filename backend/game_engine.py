@@ -57,6 +57,18 @@ class GameEngine:
         self.paused = False  # Game pause state
         self.player_animations = {}  # Track player animations
         
+        # Power-ups system
+        self.powerups = []  # Active power-ups on field
+        self.player_powerups = {}  # Active power-ups per player {player_id: {'type': str, 'expires': float}}
+        self.last_powerup_spawn = time.time()
+        self.powerup_spawn_interval = 15  # Spawn power-up every 15 seconds
+        self.powerup_types = [
+            'super_kick',    # Disparo más fuerte (2x)
+            'mega_push',     # Empuje más fuerte (2x)
+            'speed_boost',   # Velocidad aumentada (1.5x)
+            'giant',         # Jugador más grande (más fácil empujar)
+        ]
+        
     def add_player(self, player_id: str, username: str, team: str):
         """Add a player to the game"""
         # Determine spawn position based on team - horizontal field
