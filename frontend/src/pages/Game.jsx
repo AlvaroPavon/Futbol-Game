@@ -225,6 +225,44 @@ const Game = () => {
       });
     }
 
+    // Draw power-ups
+    powerups.forEach(powerup => {
+      // Power-up colors and icons
+      const powerupConfig = {
+        'super_kick': { color: '#f59e0b', icon: '⚡', glow: '#fbbf24' },
+        'mega_push': { color: '#8b5cf6', icon: '💥', glow: '#a78bfa' },
+        'speed_boost': { color: '#06b6d4', icon: '💨', glow: '#22d3ee' },
+        'giant': { color: '#10b981', icon: '⭐', glow: '#34d399' }
+      };
+      
+      const config = powerupConfig[powerup.type] || { color: '#gray', icon: '?', glow: '#666' };
+      
+      // Glow effect
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = config.glow;
+      
+      // Power-up circle
+      ctx.fillStyle = config.color;
+      ctx.beginPath();
+      ctx.arc(powerup.x, powerup.y, powerup.radius, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Border
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Reset shadow
+      ctx.shadowBlur = 0;
+      
+      // Icon
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 20px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(config.icon, powerup.x, powerup.y);
+    });
+
     // Draw ball
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
